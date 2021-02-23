@@ -35,7 +35,6 @@ class ProductController extends AbstractController
         ]);
     }
 
-
     /**
      * @Route("/{category_slug}/{slug}", name="product_show")
      */
