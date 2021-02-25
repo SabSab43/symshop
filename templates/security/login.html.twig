@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+    <h1>Se connecter</h1>
+    {% if error %}
+        <div class="alert alert-danger"> {{ error.message }}</div>
+    {% endif %}
+    <div class="row">
+        <div class="col-6">
+            {{ form_start(formView) }}
+            {{ form_widget(formView)}}
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-sign-in-alt mr-1"></i>
+                Se connecter
+            </button>
+            {{ form_end(formView) }}
+        </div>
+    </div>
+{% endblock %}

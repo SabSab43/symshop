@@ -17,9 +17,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class ProductController extends AbstractController
 {
     /**
-     * @Route("/{slug}", name="product")
+     * @Route("/{slug}", name="product_category", priority=-1)
      */
-    public function index($slug, CategoryRepository $categoryRepository): Response
+    public function category($slug, CategoryRepository $categoryRepository): Response
     {
         $category = $categoryRepository->findOneBy([
             'slug' => $slug
