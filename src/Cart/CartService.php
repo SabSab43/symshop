@@ -7,7 +7,7 @@ use App\Repository\ProductRepository;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
- * Handler Cart products
+ * This Service handles Cart items
  */
 class CartService {
     
@@ -19,7 +19,7 @@ class CartService {
     protected $session;
 
     /**
-     * Repository of Product
+     * Product Repository 
      *
      * @var ProductRepository
      */
@@ -32,33 +32,64 @@ class CartService {
     }
     
     /**
-     * add one unit of quantity item
+     * get cart from session
+     *
+     * @return array $cart
+     */
+    protected function getCart(): array
+    {
+        return $this->session->get('cart', []);
+    }
+    
+    /**
+     * Save Cart in session
+     *
+     * @param  array $cart
+     * @return void
+     */
+    protected function saveCart(array $cart)
+    {
+        $this->session->set('cart', $cart);
+    }
+    
+    /**
+     * Delete Cart from session
+     *
+     * @return void
+     */
+    public function empty()
+    {
+        $this->saveCart([]);
+    }
+    
+    /**
+     * Increment an item quantity by its id in database
      *
      * @param  int $id
      * @return void
      */
     public function add(int $id)
     {                
-        $cart = $this->session->get('cart', []);
+        $cart = $this->getCart();
 
-        if (array_key_exists($id, $cart)) {
-            $cart[$id]++;
-        }else {
-            $cart[$id] = 1;
+        if (!array_key_exists($id, $cart)) {
+            $cart[$id] = 0;
         }
 
-        $this->session->set('cart', $cart);
+        $cart[$id]++;
+
+        $this->saveCart($cart);
     }
     
     /**
-     * Decrement quantity of selected item
+     * Decrement an item quantity by its id in database
      *
      * @param  int $id 
      * @return void
      */
     public function decrement(int $id)
     {
-        $cart = $this->session->get('cart', []);
+        $cart = $this->getCart();
 
         if (!array_key_exists($id, $cart)) {
             return;
@@ -71,35 +102,35 @@ class CartService {
 
         $cart[$id]--;
 
-        $this->session->set('cart', $cart);
+        $this->saveCart($cart);
 
     }
     
     /**
-     * Delete selected item from Cart
+     * Select an item by its id and delete it from the Cart
      *
      * @param  int $id 
      * @return void
      */
     public function remove(int $id)
     {
-        $cart = $this->session->get('cart', []);
+        $cart = $this->getCart();
 
         unset($cart[$id]);
 
-        $this->session->set('cart', $cart);
+        $this->saveCart($cart);
     }
     
     /**
-     * return total price of the cart
+     * Return an integer value of cart total price
      *
-     * @return int total
+     * @return int $total
      */
     public function getTotal(): int
     {
         $total = 0;
 
-        foreach ($this->session->get('cart', []) as $id => $qty) {
+        foreach ($this->getCart() as $id => $qty) {
             $product = $this->productRepository->find($id);
 
             if (!$product){continue;}
@@ -110,15 +141,15 @@ class CartService {
     }
         
     /**
-     * Return an array fileld with CartItem Objects
+     * Return a CartItem array with any CardItem in the Purchase
      *
-     * @return array detailedCart
+     * @return CardItem[] $cartItems
      */
-    public function getDetailedCart(): array
+    public function getDetailedCartItems(): array
     {
         $detailedCart = [];
 
-        foreach ($this->session->get('cart', []) as $id => $qty) {
+        foreach ($this->getCart() as $id => $qty) {
 
             $product = $this->productRepository->find($id);
 

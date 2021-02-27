@@ -1,0 +1,38 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Mes commandes{% endblock %}
+
+{% block body %}
+<h1>Vos commandes</h1>
+{% include "/shared/_flashes.html.twig" %}
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Numéro de commande</th>
+            <th>Adresse de livraison</th>
+            <th>Date de commande</th>
+            <th>Produits</th>
+            <th>Prix Total</th>
+            <th>Statut</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in purchases %}
+            <tr>
+                <td>{{ p.id }}</td>
+                <td>{{ p.address }}<br>{{ p.postalCode }}, {{ p.city }}</td>
+                <td>{{ p.purchaseAt | date('d/m/Y à H:i') }}</td>
+                <td>
+                    <ul>
+                        {% for item in p.purchaseItems %}
+                            <li>{{ item.quantity }}x {{ item.productName }} ({{ item.total / 100 }}€)</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>{{ p.total / 100}}€</td>
+                <td>{{ p.status }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

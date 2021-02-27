@@ -5,7 +5,7 @@ namespace App\Cart;
 use App\Entity\Product;
 
 /**
- * Item of cart
+ * CarItem represents an item of the Cart
  */
 class CartItem {
     
@@ -17,7 +17,7 @@ class CartItem {
     public $product;
         
     /**
-     * quantity of products
+     * Quantity of this item in the cart
      *
      * @var int qty
      */
@@ -30,7 +30,7 @@ class CartItem {
     }
     
     /**
-     * count total cart price
+     * Count total price of this CartItem
      *
      * @return int total
      */
