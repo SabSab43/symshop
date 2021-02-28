@@ -2,13 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\PurchaseRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PurchaseRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=PurchaseRepository::class)
+ * @HasLifecycleCallbacks
  */
 class Purchase
 {
@@ -60,16 +63,41 @@ class Purchase
     /**
      * @ORM\Column(type="datetime")
      */
-    private $purchaseAt;
+    private $purchasedAt;
 
     /**
      * @ORM\OneToMany(targetEntity=PurchaseItem::class, mappedBy="purchase", orphanRemoval=true)
+     * @var Collection<PurchaseItem>
      */
     private $purchaseItems;
 
     public function __construct()
     {
         $this->purchaseItems = new ArrayCollection();
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function prePersist() 
+    {
+        if (empty($this->purchasedAt)) {
+            $this->purchasedAt = new DateTime();
+        }
+    }
+
+    /**
+     * @ORM\PreFlush
+     */
+    public function preFlush()
+    {
+        $total = 0;
+
+        foreach ($this->purchaseItems as $item) {
+            $total += $item->getTotal();
+        }
+        
+        $this->total = $total;
     }
 
     public function getId(): ?int
@@ -161,14 +189,14 @@ class Purchase
         return $this;
     }
 
-    public function getPurchaseAt(): ?\DateTimeInterface
+    public function getPurchasedAt(): ?\DateTimeInterface
     {
-        return $this->purchaseAt;
+        return $this->purchasedAt;
     }
 
-    public function setPurchaseAt(\DateTimeInterface $purchaseAt): self
+    public function setPurchasedAt(\DateTimeInterface $purchasedAt): self
     {
-        $this->purchaseAt = $purchaseAt;
+        $this->purchasedAt = $purchasedAt;
 
         return $this;
     }

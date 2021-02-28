@@ -15,19 +15,12 @@ use Bluemmb\Faker\PicsumPhotosProvider;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
  * Fills database
  */
 class AppFixtures extends Fixture
 {    
-    /**
-     * slugger
-     *
-     * @var SluggerInterface
-     */
-    protected $slugger;    
     /**
      * password encoder
      *
@@ -36,9 +29,8 @@ class AppFixtures extends Fixture
     protected $encoder;
 
 
-    public function __construct(SluggerInterface $slugger, UserPasswordEncoderInterface $encoder)
+    public function __construct(UserPasswordEncoderInterface $encoder)
     {
-        $this->slugger = $slugger;
         $this->encoder = $encoder;
     }
     
@@ -83,7 +75,6 @@ class AppFixtures extends Fixture
         for ($i=0; $i < 3; $i++) { 
             $category = new Category();
             $category->setName($faker->department);
-            $category->setSlug(strtolower($this->slugger->slug($category->getName())));
 
             $manager->persist($category);
 
@@ -91,7 +82,6 @@ class AppFixtures extends Fixture
                 $product = new Product();
                 $product->setName($faker->productName)
                         ->setPrice($faker->price(4000, 20000))
-                        ->setSlug(strtolower($this->slugger->slug($product->getName())))
                         ->setCategory($category)
                         ->setMainPicture($faker->imageUrl(400, 400, true))
                         ->setShortDescription($faker->paragraph())
@@ -111,7 +101,7 @@ class AppFixtures extends Fixture
                     ->setPostalCode($faker->postcode)
                     ->setCity($faker->city)
                     ->setUser($faker->randomElement($users))
-                    ->setPurchaseAt($faker->dateTimeBetween('-6 months', 'now'))
+                    ->setPurchasedAt($faker->dateTimeBetween('-6 months', 'now'))
             ;
 
             $selectedProducts = $faker->randomElements($products, mt_rand(3,5));

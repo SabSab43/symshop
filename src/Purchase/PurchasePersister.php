@@ -51,21 +51,18 @@ class PurchasePersister
      */
     public function storePurchase(Purchase $purchase)
     {
-        $purchase->setUser($this->security->getUser())
-                 ->setPurchaseAt(new DateTime())
-                 ->setTotal($this->cartService->getTotal())
-        ;
+        $purchase->setUser($this->security->getUser());
 
         $this->em->persist($purchase);
 
         foreach ($this->cartService->getDetailedCartItems() as $cartItem) {
             $purchaseItem = new PurchaseItem;
             $purchaseItem->setPurchase($purchase)
-                          ->setProduct($cartItem->product)
-                          ->setProductName($cartItem->product->getName())
-                          ->setProductPrice($cartItem->product->getPrice())
-                          ->setQuantity($cartItem->qty)
-                          ->setTotal($cartItem->getTotal())
+                        ->setProduct($cartItem->product)
+                        ->setProductName($cartItem->product->getName())
+                        ->setProductPrice($cartItem->product->getPrice())
+                        ->setQuantity($cartItem->qty)
+                        ->setTotal($cartItem->getTotal())
             ;
             $this->em->persist($purchaseItem);
         }
