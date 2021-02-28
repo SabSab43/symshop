@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Doctrine;
+namespace App\Doctrine\Listener;
 
 use App\Entity\Category;
 use Symfony\Component\String\Slugger\SluggerInterface;

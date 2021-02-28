@@ -47,7 +47,7 @@ class CategoryController extends AbstractController
     }
 
     /**
-     * @Route("/admin/category/{id}/edit", name="category_edit")
+     * @Route("/admin/category/edit/{id}", name="category_edit")
      */
     public function edit($id, CategoryRepository $categoryRepository, Request $request, SluggerInterface $slugger, EntityManagerInterface $em)
     {

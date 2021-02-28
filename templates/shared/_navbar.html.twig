@@ -18,7 +18,7 @@
           <i class="fas fa-shopping-cart mr-1"></i>
           Panier
           {% if cartService.total > 0 %}
-            ({{ cartService.total }})
+            ({{ cartService.total | amount }})
           {% endif %}
         </a>
       </li>

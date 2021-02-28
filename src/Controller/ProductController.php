@@ -83,7 +83,7 @@ class ProductController extends AbstractController
     }
 
     /**
-     * @Route("/admin/product/{id}/edit")
+     * @Route("/admin/product/edit/{id}")
      */
     public function edit($id, Request $request, ProductRepository $productRepository, EntityManagerInterface $em, SluggerInterface $slugger, ValidatorInterface $validator): Response
     {

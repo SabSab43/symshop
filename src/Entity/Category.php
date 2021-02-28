@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CategoryRepository;
 
+
 /**
  * @ORM\Entity(repositoryClass=CategoryRepository::class)
  */

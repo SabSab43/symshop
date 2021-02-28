@@ -35,7 +35,7 @@ services:
             $secretKey: "%env(STRIPE_SECRET_KEY)%"
             $publicKey: "%env(STRIPE_PUBLIC_KEY)%"        
     
-    App\Doctrine\ProductSlugListener:
+    App\Doctrine\Listener\ProductSlugListener:
         tags: [
             {
                 name: "doctrine.orm.entity_listener",
@@ -44,7 +44,7 @@ services:
             }
         ]
     
-    App\Doctrine\CategorySlugListener:
+    App\Doctrine\Listener\CategorySlugListener:
         tags: [
             {
                 name: "doctrine.orm.entity_listener",
