@@ -54,8 +54,10 @@ class AppFixtures extends Fixture
         $hash = $this->encoder->encodePassword($admin, '123');
 
         $admin->setEmail('admin@gmail.com')
-              ->setPassword($hash)
-              ->setRoles(['ROLE_ADMIN']);
+            ->setPassword($hash)
+            ->setRoles(['ROLE_ADMIN'])
+            ->setFullName('Saby Lucas')
+        ;
         
         $manager->persist($admin);
 
@@ -64,8 +66,12 @@ class AppFixtures extends Fixture
         for ($u=0; $u < 5; $u++) { 
             $user = new User;
             $hash = $this->encoder->encodePassword($user, 'password');
+
             $user->setEmail("user$u@gmail.com")
-                 ->setPassword($hash);
+                ->setPassword($hash)
+                ->setFullName($faker->name())
+            ;
+
             $users[] = $user;
             $manager->persist($user);
         }
