@@ -1,0 +1,15 @@
+{% extends '/bundles/TwigBundle/Exception/template_error.html.twig' %}
+
+{% block body %}
+    <div class="row align-items-center text-center">
+        <div class="col-12">
+            <h1>Erreur {{ status_code }}: Ressource indisponible</h1>
+        </div>
+        <div class="col-12">
+            <p>La ressource n'est plus disponible et aucune adresse de redirection n’est connue.</p>
+        </div>
+        <div class="col-12">
+            <a href="{{ path("homepage") }}" class="btn btn-success">Retour à l'accueil</a>
+        </div>
+    </div>
+{% endblock %}

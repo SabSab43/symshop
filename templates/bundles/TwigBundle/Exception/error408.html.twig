@@ -1,0 +1,12 @@
+{% extends '/bundles/TwigBundle/Exception/template_error.html.twig' %}
+
+{% block body %}
+    <div class="row align-items-center text-center">
+        <div class="col-12">
+            <h1>Erreur {{ status_code }}: Temps d'attente écoulé</h1>
+        </div>
+        <div class="col-12">
+            <p>Le délai d'attente côté serveur a été dépassé, merci de réactualiser cette page.</p>
+        </div>
+    </div>
+{% endblock %}

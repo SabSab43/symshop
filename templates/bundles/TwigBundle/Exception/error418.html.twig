@@ -1,0 +1,16 @@
+{% extends '/bundles/TwigBundle/Exception/template_error.html.twig' %}
+
+{% block body %}
+    <div class="row align-items-center text-center">
+        <div class="col-12">
+            <h1>Erreur {{ status_code }}: I'm a Teapot</h1>
+        </div>
+        <div class="col-12">
+            <img src="http://picsum.photos/id/1060/250/250" alt="A nice Teapot">
+            <p class="pt-2">Je suis une théière</p>
+        </div>
+        <div class="col-12">
+            <a href="{{ path("homepage") }}" class="btn btn-success">Retour à l'accueil</a>
+        </div>
+    </div>
+{% endblock %}

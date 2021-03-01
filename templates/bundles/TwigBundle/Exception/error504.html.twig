@@ -1,0 +1,15 @@
+{% extends '/bundles/TwigBundle/Exception/template_error.html.twig' %}
+
+{% block body %}
+    <div class="row align-items-center text-center">
+        <div class="col-12">
+            <h1>Erreur {{ status_code }}: Temps d'attente écoulé</h1>
+        </div>
+        <div class="col-12">
+            <p class="pt-2">Temps d’attente d’une réponse du serveur écoulé.</p>
+        </div>
+        <div class="col-12">
+            <a href="{{ path("homepage") }}" class="btn btn-success">Retour à l'accueil</a>
+        </div>
+    </div>
+{% endblock %}

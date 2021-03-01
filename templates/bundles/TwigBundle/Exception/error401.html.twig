@@ -1,0 +1,15 @@
+{% extends '/bundles/TwigBundle/Exception/template_error.html.twig' %}
+
+{% block body %}
+    <div class="row align-items-center text-center">
+        <div class="col-12">
+            <h1>Erreur {{ status_code }}: Authentification nécessaire</h1>
+        </div>
+        <div class="col-12">
+            <p>La page à laquelle vous essayez d'accéder nécessite d'être authentifié.</p>
+        </div>
+        <div class="col-12">
+            <a href="{{ path("security_login") }}" class="btn btn-success">Veuillez vous connecter</a>
+        </div>
+    </div>
+{% endblock %}
