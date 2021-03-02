@@ -51,9 +51,7 @@ class AppFixtures extends Fixture
 
         $admin = new User;
 
-
-        $hash = $this->encoder->encodePassword($admin, 'boulette');
-
+        $hash = $this->encoder->encodePassword($admin, 'admin123VerySafe');
 
         $admin->setEmail('admin@gmail.com')
             ->setPassword($hash)
@@ -67,9 +65,7 @@ class AppFixtures extends Fixture
 
         for ($u=0; $u < 5; $u++) { 
             $user = new User;
-
-            $hash = $this->encoder->encodePassword($user, 'boulette2');
-
+            $hash = $this->encoder->encodePassword($user, 'user123VerySafe');
 
             $user->setEmail("user$u@gmail.com")
                 ->setPassword($hash)
@@ -81,7 +77,9 @@ class AppFixtures extends Fixture
         }
 
         $products = [];
-
+        $p=0;
+        //Numbers of images products available in ../public/uploads/images/products
+        $pmax=23;
         for ($i=0; $i < 3; $i++) { 
             $category = new Category();
             $category->setName($faker->department);
@@ -89,11 +87,18 @@ class AppFixtures extends Fixture
             $manager->persist($category);
 
             for ($j=0; $j < mt_rand(15,20); $j++) { 
+
+                if ($p >= $pmax) {
+                    $p=1;
+                } else {
+                    $p++;
+                }
+
                 $product = new Product();
                 $product->setName($faker->productName)
                         ->setPrice($faker->price(4000, 20000))
                         ->setCategory($category)
-                        ->setMainPicture($faker->imageUrl(400, 400, true))
+                        ->setMainPicture("product-picture-($p).jpg")
                         ->setShortDescription($faker->paragraph())
                 ;
 

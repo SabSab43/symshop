@@ -4,12 +4,12 @@ namespace App\Controller\Purchase;
 
 use DateTime;
 use App\Entity\Purchase;
-use App\Cart\CartService;
 use App\Entity\PurchaseItem;
+use App\Service\Cart\CartService;
 use App\Form\CartConfirmationType;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\Purchase\PurchasePersister;
 use Symfony\Component\HttpFoundation\Request;
-use App\Purchase\PurchasePersister;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;

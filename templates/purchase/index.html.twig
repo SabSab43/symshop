@@ -21,7 +21,7 @@
             <tr>
                 <td>{{ p.id }}</td>
                 <td>{{ p.address }}<br>{{ p.postalCode }} {{ p.city }}</td>
-                <td>{{ p.purchasedAt | date('d/m/Y à H:i') }}</td>
+                <td>{{ p.purchasedAt | date('d/m/Y à H:i', "Europe/Paris") }}</td>
                 <td>
                     <ul>
                         {% for item in p.purchaseItems %}

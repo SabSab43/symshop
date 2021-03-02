@@ -2,11 +2,10 @@
 
 namespace App\Controller\Purchase;
 
-use Stripe\Stripe;
+
 use App\Entity\Purchase;
-use Stripe\PaymentIntent;
 use App\Repository\PurchaseRepository;
-use App\Stripe\StripeService;
+use App\Service\Stripe\StripeService;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

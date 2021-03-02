@@ -3,14 +3,14 @@
 namespace App\Controller\Purchase;
 
 use App\Entity\Purchase;
-use App\Cart\CartService;
+use App\Service\Cart\CartService;
 use App\Event\PurchaseSuccessEvent;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\PurchaseRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * If purchase payment is successful

@@ -27,3 +27,8 @@
 
     {{ form_end(formView) }}
 {% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="/js/productForm.js"></script>
+{% endblock %}

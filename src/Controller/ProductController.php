@@ -4,15 +4,18 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Form\ProductType;
-use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
+use App\Repository\CategoryRepository;
+use App\Service\FileUploader\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 /**
  * This controller handles products
@@ -59,14 +62,24 @@ class ProductController extends AbstractController
     /**
      * @Route("/admin/product/create", name="product_create")
      */
-    public function create(Request $request, SluggerInterface $slugger, EntityManagerInterface $em): Response
+    public function create(Request $request, SluggerInterface $slugger, EntityManagerInterface $em, FileUploader $fileUploader): Response
     {
         $product = new Product;
         $form = $this->createForm(ProductType::class, $product);       
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
+
+             /** @var UploadedFile $mainPicture */
+            $mainPicture = $form->get('mainPicture')->getData();
+
+            if ($mainPicture) {
+                $mainPictureName = $fileUploader->upload($mainPicture);
+                $product->setMainPicture($mainPictureName);
+            }
+
             $product->setSlug(strtolower($slugger->slug($product->getName())));
+            
             $em->persist($product);
             $em->flush();
 
@@ -85,7 +98,7 @@ class ProductController extends AbstractController
     /**
      * @Route("/admin/product/edit/{id}")
      */
-    public function edit($id, Request $request, ProductRepository $productRepository, EntityManagerInterface $em, SluggerInterface $slugger, ValidatorInterface $validator): Response
+    public function edit($id, Request $request, ProductRepository $productRepository, EntityManagerInterface $em, SluggerInterface $slugger, FileUploader $fileUploader): Response
     {
         $product = $productRepository->find(['id' => $id]);   
         
@@ -98,6 +111,15 @@ class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $mainPicture */
+            $mainPicture = $form->get('mainPicture')->getData();
+
+            if ($mainPicture) {
+                $mainPictureName = $fileUploader->upload($mainPicture);
+                $product->setMainPicture($mainPictureName);
+            }
+
+
             $product->setSlug(strtolower($slugger->slug($product->getName())));
             $em->flush();
 

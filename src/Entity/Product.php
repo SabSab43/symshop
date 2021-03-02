@@ -53,8 +53,6 @@ class Product
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="L'url de la photo principale du produit est obligatoire.")
-     * @Assert\Url(message="La photo principale doit être une url valide.")
      */
     private $mainPicture;
 

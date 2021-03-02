@@ -11,7 +11,8 @@
     <h1>{{ product.name }}({{ product.price | amount  }})</h1>
     <div class="row">
         <div class="col-4">
-            <img class="img-fluid" src="{{ product.mainPicture }}" alt="Image de {{ product.name }}">
+            <img class="img-fluid" src="{{ asset('/uploads/images/products/' ~ product.mainPicture) }}" alt="Image de {{ product.name }}">
+            <p>Toutes les image sutilisées proviennent d'Unsplash: <a href="https://unsplash.com/collections/69645865/symshop" class="link" target="-blank">Lien de la collection</a></p>
         </div>
         <div class="col">
             <span class="badge badge-primary">{{ product.category.name }}</span>
