@@ -1,0 +1,31 @@
+{% extends "admin/base.html.twig" %}
+
+{% block title %}Liste des produits{% endblock %}
+
+{% block body %}
+    <h1>Liste des produits</h1>
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <th scope="col">Nom</th>
+            <th>Image</th>
+            <th>Prix</th>
+            <th>Catégorie</th>
+            <th>Description</th>
+            <th>Supprimer</th>
+            <th>Éditer</th>
+        </thead>
+        <tbody>
+            {% for p in products %}
+            <tr>
+                <td>{{ p.name }}</td>
+                <td><img height="50px" src="/uploads/images/products/{{ p.mainPicture }}" alt="Image de {{ p.name }}"></td>
+                <td>{{ p.price }}</td>
+                <td>{{ p.category.name }}</td>
+                <td>{{ p.shortDescription |slice(0, 50)}}[...]</td> 
+                <td><a href="{{ path("admin_product_remove", {"id": p.id}) }}"><button class="btn btn-danger"><i class="fas fa-trash"></i></button></a></td>
+                <td><a href="{{ path("admin_product_edit", {"id": p.id}) }}"><button class="btn btn-primary"><i class="fas fa-edit"></i></button></a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

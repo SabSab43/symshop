@@ -3,16 +3,23 @@
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-
   <div class="collapse navbar-collapse" id="navbarColor01">
     <ul class="navbar-nav mr-auto">
-      {% for c in categoryRepository.findAll() %}
-      <li class="nav-item">
-        <a class="nav-link" href="{{ path("product_category", {"slug": c.slug}) }}">{{ c.name }}</a>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Catégories</a>  
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="#">Tous les produits</a>
+            <div class="dropdown-divider"></div>
+            {% for c in categoryRepository.findAll() %}
+              <a class="dropdown-item" href="{{ path("product_category", {"slug": c.slug}) }}">{{ c.name }}</a>
+            {% endfor %}
+        </div>
       </li>
-      {% endfor %}
     </ul>
     <ul class="navbar-nav">
+      {% if app.user and is_granted("ROLE_ADMIN") %}
+        <li class="nav-item"><a href="{{ path('admin_index') }}" class="nav-link">Administration</a></li>
+      {% endif %}
       <li class="nav-item">
         <a  class="nav-link" href="{{ path('cart_show') }}">
           <i class="fas fa-shopping-cart mr-1"></i>
@@ -22,14 +29,11 @@
           {% endif %}
         </a>
       </li>
-      {% if app.user and is_granted("ROLE_ADMIN") %}
-        <li class="nav-item"><a href="{{ path('product_create') }}" class="nav-link">Administration</a></li>
-      {% endif %}
       {% if app.user %}
         <li class="nav-item"><a href="{{ path('purchase_index') }}" class="nav-link">Mes commandes</a></li>
         <li class="nav-item"><a href="{{ path('security_logout') }}" class="btn btn-danger">Logout</a></li>
       {% else %}
-        <li class="nav-item"><a href="#" class="nav-link">Inscription</a></li>
+        <li class="nav-item"><a href="{{ path('sign_in') }}" class="nav-link">Inscription</a></li>
         <li class="nav-item"><a href="{{ path('security_login') }}" class="btn btn-success">Login</a></li>  
       {% endif %}
     </ul>

@@ -1,0 +1,13 @@
+{% extends "/admin/base.html.twig" %}
+
+{% block title %}Création d'un produit{% endblock %}
+
+{% block body %}
+    <h1>Nouveau produit</h1>
+    {% include "admin/shared/form/_product_form.html.twig" %}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="/js/productForm.js"></script>
+{% endblock %}

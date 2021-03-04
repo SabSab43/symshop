@@ -1,0 +1,45 @@
+<div class="col-2 sidebar row bg-dark" style="height: 100vh; position: fixed;">
+
+    <div class="col-12 pl-5 pt-5">
+
+      <h2 class="text-light">Administration</h2>
+      <ul class="list-unstyled">
+        <li><a href="{{ path("admin_index") }}" class="link text-info">Tableau de bord</a></li>
+      </ul>
+      
+
+      <h2 class="text-light pt-2">Catégories</h2>
+      <ul class="list-unstyled">
+        <li><a href="{{ path("admin_category_create") }}" class="link text-info">Créer une nouvelle catégorie</a></li>
+        <li><a href="{{ path("admin_category_list") }}" class="link text-info">Liste des catégories</a></li>
+      </ul>
+      
+      <h2 class="text-light pt-2">Produits</h2>
+      <ul class="list-unstyled">
+        <li><a href="{{ path("admin_product_create") }}" class="link text-info">Créer un nouveau produit</a></li>
+        <li><a href="{{ path("admin_product_list") }}" class="link text-info">Liste des produits</a></li>
+      </ul>
+
+      <h2 class="text-light pt-2">Utilisateurs</h2>
+      <ul class="list-unstyled">
+        <li><a href="{{ path("admin_user_create") }}" class="link text-info">Créer un nouvel utilisateur</a></li>
+        <li> <a href="{{ path("admin_user_list") }}" class="link text-info">Liste des utilisateurs</a></li>
+      </ul>
+
+      <h2 class="text-light pt-2">Commandes</h2>
+      <ul class="list-unstyled">
+        <li><a href="{{ path("admin_purchase_list") }}" class="link text-info">Liste des commandes</a></li>
+      </ul>
+
+    </div>
+
+    <div class="col-12 align-self-end">
+      <hr>
+      <ul class="list-unstyled text-center">
+        <li class="mb-3"><a href="{{ path('homepage') }}" class="link text-info">Retour au site</a></li>
+        <li><a href="{{ path('security_logout') }}" class="btn btn-danger">Logout</a></li>
+      </ul>
+
+    </div>
+</div>
+

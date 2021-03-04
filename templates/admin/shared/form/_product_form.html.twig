@@ -1,0 +1,31 @@
+{{ form_start(formView) }}
+    <div class="row align-items-end">
+        <div class="col-4">
+            {{ form_row(formView.name)}}
+        </div>
+        <div class="col-4 row align-items-end">
+            <div class="col-6">{{ form_row(formView.mainPicture) }}</div>
+            {% if product is defined %}
+                <div class="col-5"><img height="100px" src="/uploads/images/products/{{ product.mainPicture }}" alt="image de {{ product.name }}"></div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row align-items-end">
+        <div class="col-4">
+        {{ form_row(formView.price)}}
+        </div>
+        <div class="col-4">
+            {{ form_row(formView.category)}}
+        </div>
+    </div>
+    <div class="row align-items-end">
+        <div class="col-4">
+            {{ form_row(formView.shortDescription)}}
+        </div>
+    </div>
+    <div class="row align-items-end">
+        <div class="col-4">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-1"></i>Enregistrer le produit</button>
+        </div>
+    </div>       
+{{ form_end(formView) }}

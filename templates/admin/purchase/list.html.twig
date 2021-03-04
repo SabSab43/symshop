@@ -1,0 +1,37 @@
+{% extends "admin/base.html.twig" %}
+
+{% block title %}Liste des commandes{% endblock %}
+
+{% block body %}
+    <h1>Liste des commandes</h1>
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <th scope="col">Numéro de commande</th>
+            <th>Commanditaire</th>
+            <th>adresse de livraison</th>
+            <th>Code postal</th>
+            <th>Ville</th>
+            <th>Prix total</th>
+            <th>Date de commande</th>
+            <th>Status</th>
+            <th>Supprimer</th>
+            <th>Éditer</th>
+        </thead>
+        <tbody>
+            {% for p in purchases %}
+            <tr>
+                <td>{{ p.id }}</td>
+                <td>{{ p.fullname }}</td>
+                <td>{{ p.address }}</td>
+                <td>{{ p.postalCode }}</td>
+                <td>{{ p.city }}</td>
+                <td>{{ p.total }}</td>
+                <td>{{ p.purchasedAt | date('d:m:Y à H:i', "Europe/Paris") }}</td>
+                <td>{{ p.status }}</td>
+                <td><a href="{{ path("admin_purchase_remove", {"id": p.id}) }}"><button class="btn btn-danger"><i class="fas fa-trash"></i></button></a></td>
+                <td><a href="{{ path("admin_purchase_details", {"id": p.id}) }}"><button class="btn btn-primary"><i class="fas fa-edit"></i></button></a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

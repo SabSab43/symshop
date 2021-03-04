@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+    <h1>Inscription</h1>
+    {% include "shared/_flashes.html.twig" %}
+    {{ form_start(formView) }}
+    {{ form_row(formView) }}
+    <button type="submit" class="btn btn-success"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+    {{ form_end(formView) }}
+{% endblock %}

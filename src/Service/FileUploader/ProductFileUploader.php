@@ -2,14 +2,15 @@
 
 namespace App\Service\FileUploader;
 
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 /**
- * Uploads files send by users on server
+ * Handles Main Picture of a product send by user on server
  */
-class FileUploader
+class ProductFileUploader
 {
     private $targetDirectory;    
     /**
@@ -18,14 +19,21 @@ class FileUploader
      * @var SluggerInterface
      */
     private $slugger;
+    
 
     public function __construct($targetDirectory, SluggerInterface $slugger)
     {
         $this->targetDirectory = $targetDirectory;
         $this->slugger = $slugger;
     }
-
-    public function upload(UploadedFile $file)
+    
+    /**
+     * upload a file
+     *
+     * @param  UploadedFile $file
+     * @return string $filename
+     */
+    public function upload(UploadedFile $file): string
     {
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $safeFilename = $this->slugger->slug($originalFilename);
@@ -36,7 +44,6 @@ class FileUploader
         } catch (FileException $e) {
             // ... handle exception if something happens during file upload
         }
-
         return $fileName;
     }
 

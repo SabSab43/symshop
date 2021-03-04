@@ -1,0 +1,30 @@
+{% extends "admin/base.html.twig" %}
+
+{% block title %}Édition de {{ user.fullName }}{% endblock %}
+
+{% block body %}
+    <h1>Édition de {{ user.fullName }}</h1>
+    {% include "shared/_flashes.html.twig" %}
+    {{ form_start(formView) }}
+    <div class="row">
+        <div class="col-6">    
+            {{ form_row(formView.email) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            {{ form_row(formView.fullName) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">            
+            {{ form_row(formView.roles) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <button type="submit" class="btn btn-success"><i class="far fa-save mr-1"></i>Enregistrer les modifications</button>
+        </div>
+    </div>
+    {{ form_end(formView) }}
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% block body %}
+<h1>Tableau de bord</h1>
+<div class="row">
+    {% include "admin/shared/_cards.html.twig" with {
+            'color': 'primary',
+            'icone':  'fas fa-users',
+            'nb': nbUsers,
+            'text': ' utilisateurs actuellement inscrits'
+    }
+    %}
+    {% include "admin/shared/_cards.html.twig" with {
+            'color': 'primary',
+            'icone':  'fas fa-box',
+            'nb': nbPurchases,
+            'text': ' commandes effectuées'
+        } 
+    %}
+    {% include "admin/shared/_cards.html.twig"  with {
+            'color': 'primary',
+            'icone':  'fas fa-store',
+            'nb': nbProducts,
+            'text': ' produits en ligne'
+        } 
+    %}
+</div>
+{% endblock %}
