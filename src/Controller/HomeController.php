@@ -18,7 +18,7 @@ class HomeController extends AbstractController
      */
     public function homepage(ProductRepository $productRepository): Response
     {
-        $products = $productRepository->findBy([], [], 3);
+        $products = $productRepository->findBy(['isForward' => true]);
 
         return $this->render('home/home.html.twig', [
             'controller_name' => 'HomeController',

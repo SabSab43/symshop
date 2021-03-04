@@ -20,12 +20,16 @@ class UserType extends AbstractType
             ->add('email', EmailType::class, [
                 'label' => "Adresse email"
             ])
-            ->add('fullName', TextType::class, [
-                'label' => "Nom/Prénom"
+            ->add('firstName', TextType::class, [
+                'label' => "Nom"
+            ])
+            ->add('lastName', TextType::class, [
+                'label' => "Prénom"
             ])
         ;
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) 
+        {
             $user = $event->getData();
             $form = $event->getForm();
 

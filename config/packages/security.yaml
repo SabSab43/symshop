@@ -18,9 +18,6 @@ security:
             anonymous: true
             lazy: true
             provider: app_user_provider      
-            # guard:
-            #     authenticators: 
-            #         - App\Security\LoginFormAuthenticator
             form_login:
                 login_path: security_login
                 check_path: security_login

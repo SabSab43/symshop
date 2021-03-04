@@ -56,7 +56,8 @@ class AppFixtures extends Fixture
         $admin->setEmail('admin@gmail.com')
             ->setPassword($hash)
             ->setRoles(['ROLE_ADMIN'])
-            ->setFullName('Saby Lucas')
+            ->setLastName('Saby')
+            ->setFirstName('Lucas')
         ;
         
         $manager->persist($admin);
@@ -69,7 +70,8 @@ class AppFixtures extends Fixture
 
             $user->setEmail("user$u@gmail.com")
                 ->setPassword($hash)
-                ->setFullName($faker->name())
+                ->setLastName($faker->lastName())
+                ->setFirstName($faker->firstName())
             ;
 
             $users[] = $user;
@@ -77,15 +79,19 @@ class AppFixtures extends Fixture
         }
 
         $products = [];
+
         $p=0;
-        //Numbers of images products available in ../public/uploads/images/products
-        $pmax=23;
+        $pmax=23;  //Numbers of images products available in ../public/uploads/images/products
+
+       
+
         for ($i=0; $i < 3; $i++) { 
             $category = new Category();
             $category->setName($faker->department);
 
             $manager->persist($category);
 
+            $isForward = 1;
             for ($j=0; $j < mt_rand(15,20); $j++) { 
 
                 if ($p >= $pmax) {
@@ -93,17 +99,23 @@ class AppFixtures extends Fixture
                 } else {
                     $p++;
                 }
-
+                
+                // not forwards products
                 $product = new Product();
                 $product->setName($faker->productName)
                         ->setPrice($faker->price(4000, 20000))
                         ->setCategory($category)
                         ->setMainPicture("product-picture-($p).jpg")
                         ->setShortDescription($faker->paragraph())
+                        ->setIsForward(false)
                 ;
 
-                $products[] = $product;
-                        
+                if ($isForward === 1) {
+                    $isForward--;
+                    $product->setIsForward(true);
+                }
+
+                $products[] = $product;                        
                 $manager->persist($product);
             }
         }        

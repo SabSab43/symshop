@@ -26,6 +26,13 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class AdminController extends AbstractController
 {
 
+    private $maxForwardProduct;
+
+    public function __construct($maxForwardProduct)
+    {
+        $this->maxForwardProduct = $maxForwardProduct;
+    }
+
     /**
      * @Route("/admin", name="admin_index")
      */
@@ -153,13 +160,61 @@ class AdminController extends AbstractController
     }   
 
     /**
+     * @Route("/admin/product/unset-forward/{id}", name="admin_product_unsetForward")
+     */
+    public function productUnsetForward(int $id, ProductRepository $productRepository, EntityManagerInterface $em)
+    {
+        $product = $productRepository->find($id);
+
+        if (!$product) {
+            $this->addFlash("danger", "Vous devez sélectionner un produit vedette valide.");
+            return $this->redirectToRoute("admin_product_list");
+        }
+
+        $product->setIsForward(false);
+        $em->flush();
+
+        $this->addFlash("success", "Votre produit n'est plus en avant.");
+
+        return $this->redirectToRoute("admin_product_list");
+    }
+
+    /**
+     * @Route("/admin/product/set-forward/{id}", name="admin_product_setForward")
+     */
+    public function productSetForward(int $id, ProductRepository $productRepository, EntityManagerInterface $em)
+    {
+        $product = $productRepository->find($id);
+
+        if (!$product) {
+            $this->addFlash("danger", "Vous devez sélectionner un produit valide.");
+            return $this->redirectToRoute("admin_product_list");
+        }
+
+        if ($productRepository->count(['isForward' => true]) >= $this->maxForwardProduct) {
+            $this->addFlash("danger", "Il ne peut y avori que $this->maxForwardProduct produits vedettes.");
+            return $this->redirectToRoute("admin_product_list");
+        }
+
+        $product->setIsForward(true);
+        $em->flush();
+
+        $this->addFlash("success", "Votre produit a bien été mis en avant.");
+
+        return $this->redirectToRoute("admin_product_list");
+    }
+
+    /**
      * @Route("/admin/product/list", name="admin_product_list")
      */
     public function productsList(ProductRepository $productRepository) 
     {
-        $products = $productRepository->findAll();
+        $notForwardProducts = $productRepository->findBy(['isForward' => false]);
+        $ForwardProducts = $productRepository->findBy(['isForward' => true]);
+
         return $this->render("admin/product/list.html.twig", [
-            "products" => $products
+            "notForwardProducts" => $notForwardProducts,
+            "ForwardProducts" => $ForwardProducts
         ]);
     }
 
@@ -258,7 +313,38 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/user/list", name="admin_user_list")
+     * @Route("/admin/user/list/admins", name="admin_admins_list")
+    */
+    public function adminList(UserRepository $userRepository) 
+    {
+        $admins = $userRepository->findAll();
+
+        return $this->render("admin/user/admins_list.html.twig", [
+            "admins" => $admins
+        ]);
+    }
+
+    /**
+     * @Route("/admin/downgrade/{id}", name="admin_downgrade_role")
+    */
+    public function adminDowngrade(int $id, UserRepository $userRepository, EntityManagerInterface $em) 
+    {
+        $admin = $userRepository->find($id);
+
+        if (!$admin) {
+            $this->addFlash("danger", "vous devez sélectionner un administrateur valide pour pouvoir le rétrograder");
+
+            return $this->redirectToRoute("admin_admins_list");
+        }
+
+        $admin->setRoles([]);
+        $em->flush();
+
+        return $this->redirectToRoute("admin_admins_list");
+    }
+
+    /**
+     * @Route("/admin/user/list/users", name="admin_user_list")
     */
     public function usersList(UserRepository $userRepository) 
     {
@@ -267,7 +353,7 @@ class AdminController extends AbstractController
             "users" => $users
         ]);
     }
-    
+
     /**
      * @Route("/admin/user/create", name="admin_user_create")
      */
@@ -358,7 +444,7 @@ class AdminController extends AbstractController
         $em->remove($user);
         $em->flush();
 
-        $this->addFlash("success", "L'utilisateur a bien été supprimée.");
+        $this->addFlash("success", "L'utilisateur a bien été supprimé.");
 
         return $this->redirectToRoute("admin_user_list");
     } 

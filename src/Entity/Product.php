@@ -73,6 +73,11 @@ class Product
      */
     private $purchaseItems;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isForward;
+
     public function __construct()
     {
         $this->purchaseItems = new ArrayCollection();
@@ -181,6 +186,18 @@ class Product
                 $purchaseItem->setProduct(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIsForward(): ?bool
+    {
+        return $this->isForward;
+    }
+
+    public function setIsForward(bool $isForward): self
+    {
+        $this->isForward = $isForward;
 
         return $this;
     }

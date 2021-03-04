@@ -6,16 +6,19 @@
     <h1>Création d'un nouvel utilisateur</h1>
     {{ form_start(formView) }}
     <div class="row">
-        <div class="col-6">{{ form_row(formView.email) }}</div>
+        <div class="col-4">{{ form_row(formView.email) }}</div>
     </div>
     <div class="row">
-        <div class="col-6">{{ form_row(formView.fullName) }}</div>
+        <div class="col-4">
+            {{ form_row(formView.firstName) }}
+        </div>
+        <div class="col-4">
+            {{ form_row(formView.lastName) }}
+        </div>
     </div>
     <div class="row">
-        <div class="col-6">{{ form_row(formView.password) }}</div>
-    </div>
-    <div class="row">
-        <div class="col-6">{{ form_row(formView.confirmPassword) }}</div>
+        <div class="col-4">{{ form_row(formView.password) }}</div>
+        <div class="col-4">{{ form_row(formView.confirmPassword) }}</div>
     </div>
     <div class="row">
         <div class="col-6"><button type="submit" class="btn btn-success"><i class="fas fa-save mr-1"></i>Enregistrer l'utilisateur</button></div>

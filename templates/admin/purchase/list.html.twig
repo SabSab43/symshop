@@ -19,13 +19,17 @@
         </thead>
         <tbody>
             {% for p in purchases %}
-            <tr>
+            {% if p.status == "PENDING" %}
+                <tr class="table-danger">
+            {% else %}
+                <tr>    
+            {% endif %}
                 <td>{{ p.id }}</td>
                 <td>{{ p.fullname }}</td>
                 <td>{{ p.address }}</td>
                 <td>{{ p.postalCode }}</td>
                 <td>{{ p.city }}</td>
-                <td>{{ p.total }}</td>
+                <td>{{ p.total | amount }}</td>
                 <td>{{ p.purchasedAt | date('d:m:Y à H:i', "Europe/Paris") }}</td>
                 <td>{{ p.status }}</td>
                 <td><a href="{{ path("admin_purchase_remove", {"id": p.id}) }}"><button class="btn btn-danger"><i class="fas fa-trash"></i></button></a></td>

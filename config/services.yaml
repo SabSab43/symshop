@@ -56,3 +56,7 @@ services:
     App\Service\FileUploader\ProductFileUploader:
         arguments:
             $targetDirectory: '%products_images_directory%'
+
+    App\Controller\AdminController:
+        arguments:
+            $maxForwardProduct: 3

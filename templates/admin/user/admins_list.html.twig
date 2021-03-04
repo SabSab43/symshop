@@ -1,0 +1,33 @@
+{% extends "/admin/base.html.twig" %}
+
+{% block title %}Liste des administrateurs{% endblock %}
+
+{% block body %}
+    <h1>Liste des administrateurs</h1>
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <th scope="col">Nom/Prénom</th>
+            <th>Email</th>
+            <th>Retirer des administrateurs</th>
+        </thead>
+        <tbody>
+            {% for a in admins %}
+                {% set isAdmin = false %}
+
+                {% for role in a.roles %}
+                    {% if role == "ROLE_ADMIN" %}
+                        {% set isAdmin = true %}
+                    {% endif %}
+                {% endfor %} 
+
+                {% if isAdmin == true %}
+                    <tr>
+                        <td>{{ a.lastName}} {{ a.firstName }}</td>
+                        <td>{{ a.email }}</td>
+                        <td><a href="{{ path("admin_downgrade_role", {"id": a.id}) }}"><button class="btn btn-danger"><i class="fas fa-trash"></i></button></a></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

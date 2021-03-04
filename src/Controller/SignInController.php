@@ -28,6 +28,7 @@ class SignInController extends AbstractController
             
            /** @var User */
             $user = $form->getData();
+            
             $requestUser = $request->get("user");
             $confirmPassword = $requestUser['confirmPassword'];
 
