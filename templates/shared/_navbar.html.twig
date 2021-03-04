@@ -6,14 +6,16 @@
   <div class="collapse navbar-collapse" id="navbarColor01">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Catégories</a>  
-        <div class="dropdown-menu">
-            <a class="dropdown-item" href="#">Tous les produits</a>
-            <div class="dropdown-divider"></div>
-            {% for c in categoryRepository.findAll() %}
-              <a class="dropdown-item" href="{{ path("product_category", {"slug": c.slug}) }}">{{ c.name }}</a>
-            {% endfor %}
-        </div>
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Catégories
+        </a>
+        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+          <li><a class="dropdown-item" href="{{ path("product_show_all") }}">Tous les produits</a></li>
+          <li><hr class="dropdown-divider"></li>
+          {% for c in categoryRepository.findAll() %}
+            <li><a class="dropdown-item" href="{{ path("product_category", {"slug": c.slug}) }}">{{ c.name }}</a></li>
+          {% endfor %}
+        </ul>
       </li>
     </ul>
     <ul class="navbar-nav">

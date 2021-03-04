@@ -21,7 +21,7 @@
                 <td><img height="50px" src="/uploads/images/products/{{ p.mainPicture }}" alt="Image de {{ p.name }}"></td>
                 <td>{{ p.price }}</td>
                 <td>{{ p.category.name }}</td>
-                <td>{{ p.shortDescription |slice(0, 50)}}[...]</td> 
+                <td>{{ p.shortDescription | slice(0, 50)}}[...]</td> 
                 <td><a href="{{ path("admin_product_remove", {"id": p.id}) }}"><button class="btn btn-danger"><i class="fas fa-trash"></i></button></a></td>
                 <td><a href="{{ path("admin_product_edit", {"id": p.id}) }}"><button class="btn btn-primary"><i class="fas fa-edit"></i></button></a></td>
             </tr>

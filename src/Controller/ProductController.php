@@ -29,4 +29,16 @@ class ProductController extends AbstractController
             'product' => $product
         ]);
     }
+
+     /**
+     * @Route("/shop", name="product_show_all")
+     */
+    public function category(ProductRepository $productRepository): Response
+    {
+        $products = $productRepository->findAll();
+
+         return $this->render('product/show_all.html.twig', [
+            'products' => $products
+        ]);
+    }
 }
