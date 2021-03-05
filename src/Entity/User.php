@@ -24,6 +24,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\NotBlank(message="Vous devez renseigner une adresse email.")
+     * @Assert\Email(message = "Le format de l'email est incorrect.")
      */
     private $email;
 
@@ -36,6 +37,12 @@ class User implements UserInterface
      * @var string The hashed password
      * @ORM\Column(type="string")
      * @Assert\NotBlank(message="Vous devez renseigner un mot de passe.")
+     * @Assert\Length(
+     *      min = 8,
+     *      max = 255,
+     *      minMessage = "Le mot de passe doit contenir au moins {{ limit }}caractères",
+     *      maxMessage = "Le mot de passe doit contenir au maximum {{ limit }} caractères"
+     * )
      */
     private $password;
 
@@ -47,12 +54,24 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Vous devez renseigner un prénom.")
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 50,
+     *      minMessage = "Le prénom doit contenir au moins {{ limit }} caractères",
+     *      maxMessage = "Le prénom doit contenir au maximum { limit } caractères"
+     * )
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Vous devez renseigner un nom.")
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 50,
+     *      minMessage = "Le nom doit contenir au moins {{ min }}caractères",
+     *      maxMessage = "Le nom doit contenir au maximum {{ max }} caractères"
+     * )
      */
     private $lastName;
 

@@ -14,6 +14,8 @@ use App\Repository\PurchaseItemRepository;
 use App\Repository\PurchaseRepository;
 use App\Repository\UserRepository;
 use App\Service\FileUploader\ProductFileUploader;
+use App\Service\Product\ProductService;
+use App\Service\User\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +24,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class AdminController extends AbstractController
 {
@@ -54,72 +57,48 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/product/create", name="admin_product_create")
      */
-    public function productCreate(Request $request, SluggerInterface $slugger, EntityManagerInterface $em, ProductRepository $productRepository, ProductFileUploader $productFileUploader): Response
+    public function productCreate(Request $request, ProductService $productService , SluggerInterface $slugger, EntityManagerInterface $em, ProductRepository $productRepository, ProductFileUploader $productFileUploader): Response
     {
         $product = new Product;
-        $form = $this->createForm(ProductType::class, $product);       
+        $form = $this->createForm(ProductType::class, $product);     
+
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
 
-            if ($productRepository->findOneBy(['name' => $product->getName()]) !== null) {
+            if ($productService->productExist($product)) {
                 $this->addFlash("danger", "Il existe déjà un produit portant ce nom, merci de choisir un autre nom.");
                 return $this->redirectToRoute("admin_product_create");
             }
-
-            /** @var UploadedFile $mainPicture */
-            $mainPicture = $form->get('mainPicture')->getData();
-
-            if ($mainPicture) {
-                $mainPictureName = $productFileUploader->upload($mainPicture);
-                $product->setMainPicture($mainPictureName);
-            }
-
-            $product->setSlug(strtolower($slugger->slug($product->getName())));
             
-            $em->persist($product);
-            $em->flush();
+            $productService->createProduct($product, $form);
 
             $this->addFlash("success", "Votre nouveau produit a bien été créé.");
-
-            return $this->redirectToRoute("admin_product_create", [
-                "category_slug" => $product->getCategory()->getSlug(),
-                "slug" => $product->getSlug()
-            ]);
         }
 
-        $formView = $form->createView();
         return $this->render('/admin/product/create.html.twig', [
-            'formView' => $formView
+            'formView' => $form->createView()
         ]);
     }
 
     /**
      * @Route("/admin/product/edit/{id}", name="admin_product_edit")
      */
-    public function productEdit(int $id, Request $request, ProductRepository $productRepository, EntityManagerInterface $em, SluggerInterface $slugger, ProductFileUploader $productFileUploader): Response
+    public function productEdit(int $id, ProductRepository $productRepository, ProductService $productService, Request $request): Response
     {
+        /** @var Product */
         $product = $productRepository->find(['id' => $id]);   
-        
+
         if (!$product) {
             throw $this->createNotFoundException("Le produit demandé n'existe pas.");
         }
-        
-        $form = $this->createForm(ProductType::class, $product);
 
+        $form = $this->createForm(ProductType::class, $product);     
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var UploadedFile $mainPicture */
-            $mainPicture = $form->get('mainPicture')->getData();
 
-            if ($mainPicture !== null) {
-                $newMainPicture = $productFileUploader->upload($mainPicture);
-                $product->setMainPicture($newMainPicture);
-            }
-
-            $product->setSlug(strtolower($slugger->slug($product->getName())));
-            $em->flush();
+            $productService->updateProduct($product, $form);
 
             $this->addFlash("success", "Votre produit a bien été modifié.");
 
@@ -128,12 +107,10 @@ class AdminController extends AbstractController
                 "slug" => $product->getSlug(),
                 "id" => $product->getId()
             ]);
+
         }
-
-        $formView = $form->createView();
-
         return $this->render('/admin/product/edit.html.twig', [
-            'formView' => $formView,
+            'formView' => $form->createView(),
             "product" =>$product
         ]);
     }
@@ -144,12 +121,11 @@ class AdminController extends AbstractController
     public function productRemove(int $id, EntityManagerInterface $em, ProductRepository $productRepository)
     {
         $product = $productRepository->find($id);
+
         if (!$product) {
             $this->addFlash("danger", "Le produit que vous essayez de supprimer n'existe pas.");
             return $this->redirectToRoute("admin_product_list");
         }
-
-
 
         $em->remove($product);
         $em->flush();
@@ -274,11 +250,9 @@ class AdminController extends AbstractController
             ]);
         }
 
-        $formView = $form->createView();
-
         return $this->render('admin/category/edit.html.twig', [   
             "category" => $category,
-            "formView" => $formView,
+            "formView" => $form->createView(),
         ]);
     }
 
@@ -307,6 +281,7 @@ class AdminController extends AbstractController
     public function categoriesList(CategoryRepository $categoryRepository) 
     {
         $categorys = $categoryRepository->findAll();
+
         return $this->render("admin/category/list.html.twig", [
             "categorys" => $categorys
         ]);
@@ -357,36 +332,18 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/user/create", name="admin_user_create")
      */
-    public function userCreate(Request $request, EntityManagerInterface $em, UserRepository $userRepository, UserPasswordEncoderInterface $encoder): Response
+    public function userCreate(Request $request, UserService $userService): Response
     {
         $form = $this->createForm(UserType::class, new User);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            /** @var User */
-            $user = $form->getData();
-            $requestUser = $request->get("user");
-            $confirmPassword = $requestUser['confirmPassword'];
-
-            if ($user->getPassword() != $confirmPassword) {
-                $this->addFlash("danger", "Les mots de passe ne sont pas identiques.");
+            if ($userService->createUser($form) === false) {
                 return $this->redirectToRoute("admin_user_create");
             }
-            
-            // search an email occurence in the database
-            if ($userRepository->findOneBy(['email' => $user->getEmail()])) {
-                $this->addFlash("danger", "cette adresse email est déjà liée à un compte, merci d'en choisir une autre.");
-                return $this->redirectToRoute("admin_user_create");
-            }
-
-            $user->setPassword($encoder->encodePassword($user, $user->getPassword()));
-
-            $em->persist($user);
-            $em->flush();
 
             $this->addFlash("success", "Votre nouvel utilisateur a bien été créé.");
-
             return $this->redirectToRoute("admin_user_create");
         }
 
@@ -400,7 +357,6 @@ class AdminController extends AbstractController
      */
     public function userEdit(int $id, UserRepository $userRepository, Request $request, EntityManagerInterface $em)
     {
-
         $user = $userRepository->find($id);
 
         if (!$user) {
@@ -408,7 +364,6 @@ class AdminController extends AbstractController
         }
 
         $form = $this->createForm(UserType::class, $user);
-
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
@@ -422,11 +377,9 @@ class AdminController extends AbstractController
             ]);
         }
 
-        $formView = $form->createView();
-
         return $this->render('admin/user/edit.html.twig', [   
             "user" => $user,
-            "formView" => $formView
+            "formView" => $form->createView()
         ]);
     }
 

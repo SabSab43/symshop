@@ -6,6 +6,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 /**
  * Handles Main Picture of a product send by user on server
@@ -19,12 +20,15 @@ class ProductFileUploader
      * @var SluggerInterface
      */
     private $slugger;
+
+    private $flashBag;
     
 
-    public function __construct($targetDirectory, SluggerInterface $slugger)
+    public function __construct($targetDirectory, SluggerInterface $slugger, FlashBagInterface $flashBag)
     {
         $this->targetDirectory = $targetDirectory;
         $this->slugger = $slugger;
+        $this->flashBag = $flashBag;
     }
     
     /**
@@ -42,7 +46,7 @@ class ProductFileUploader
         try {
             $file->move($this->getTargetDirectory(), $fileName);
         } catch (FileException $e) {
-            // ... handle exception if something happens during file upload
+            $this->flashBag->add("danger", "Erreur lors du téléchargement de l'image:".$e);
         }
         return $fileName;
     }

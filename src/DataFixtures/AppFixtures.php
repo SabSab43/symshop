@@ -100,7 +100,6 @@ class AppFixtures extends Fixture
                     $p++;
                 }
                 
-                // not forwards products
                 $product = new Product();
                 $product->setName($faker->productName)
                         ->setPrice($faker->price(4000, 20000))
@@ -109,7 +108,7 @@ class AppFixtures extends Fixture
                         ->setShortDescription($faker->paragraph())
                         ->setIsForward(false)
                 ;
-
+                // set one forward product by category
                 if ($isForward === 1) {
                     $isForward--;
                     $product->setIsForward(true);

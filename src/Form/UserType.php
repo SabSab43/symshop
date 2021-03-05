@@ -6,11 +6,14 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class UserType extends AbstractType
 {
@@ -18,13 +21,13 @@ class UserType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class, [
-                'label' => "Adresse email"
+                'label' => "Adresse email",
             ])
             ->add('firstName', TextType::class, [
-                'label' => "Nom"
+                'label' => "Nom",
             ])
             ->add('lastName', TextType::class, [
-                'label' => "Prénom"
+                'label' => "Prénom",
             ])
         ;
 
@@ -35,13 +38,26 @@ class UserType extends AbstractType
 
             if (!$user || null === $user->getId()) {
                 $form->add('password', PasswordType::class, [
-                    'label' => 'Choisissez un mot de passe'
+                    'label' => 'Choisissez un mot de passe',
+                    'empty_data' => ''
                 ])
                 ->add('confirmPassword', PasswordType::class, [
                     'label' => 'confirmez votre mot de passe',
-                    'mapped' => false
+                    'mapped' => false,
+                    'constraints' => [
+                        new Length([
+                            'min' => 8,
+                            "max" => 255,
+                            "minMessage" => "Le mot de passe doit contenir au moins {{ limit }} caractères",
+                            "maxMessage" => "Le mot de passe doit contenir au maximum {{ limit }} caractères"
+                        ]),
+                        new NotBlank([
+                            "message" => "Vous devez renseigner un mot de passe."
+                        ])
+                    ],
                 ]);
             }
+
             if ($user && null !== $user->getId()) {
                 $form->add('roles', ChoiceType::class, [    
                     'choices' => [
