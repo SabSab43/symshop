@@ -11,11 +11,13 @@
         <div class="col-6">
             {% include "/shared/_flashes.html.twig" %}
             {{ form_start(formView) }}
-            {{ form_widget(formView)}}
-            <button type="submit" class="btn btn-success">
-                <i class="fas fa-sign-in-alt mr-1"></i>
-                Se connecter
-            </button>
+                {{ form_widget(formView)}}
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-sign-in-alt mr-1"></i>
+                    Se connecter
+                </button>
+<a href="{{ path('app_forgot_password_request') }}" class="link">Mot de passe oublié ?</a>
+
             {{ form_end(formView) }}
         </div>
     </div>

@@ -10,13 +10,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class SignInController extends AbstractController
+class SignUpController extends AbstractController
 {
     /**
-     * @Route("/sign-in", name="sign_in")
+     * @Route("/sign-up", name="sign_up")
      */
     public function index(Request $request, UserService $userService): Response
     {
+        if (null !== $this->getUser()) 
+        {
+            return $this->redirectToRoute("homepage");
+        }
         $form = $this->createForm(UserType::class,  new User);
         $form->handleRequest($request);
 

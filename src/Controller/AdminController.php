@@ -232,7 +232,7 @@ class AdminController extends AbstractController
         $category = $categoryRepository->find($id);
 
         if (!$category) {
-            throw $this->createNotFoundException("La catégorie demandée n'existe pas.");
+            $this->addFlash("danger", "La catégorie demandée n'existe pas.");
         }
 
         $form = $this->createForm(CategoryType::class, $category);

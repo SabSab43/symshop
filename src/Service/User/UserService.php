@@ -96,12 +96,12 @@ class UserService
     }
     
     /**
-     * Check if an other user usethis email or not.
+     * Check if an email adress exist in database.
      *
      * @param  string $email
      * @return bool
      */
-    private function emailExist(string $email): bool
+    public function emailExist(string $email): bool
     {
         if ($this->userRepository->findOneBy(['email' => $email]) !== null) {
             return true;

@@ -13,7 +13,6 @@ use Symfony\Component\Mime\Address;
  * Sends an email when a purchase is successful paid
  */
 class PurchaseSuccessEmailSubscriber implements EventSubscriberInterface{
-    
     /**
      * logger
      *
