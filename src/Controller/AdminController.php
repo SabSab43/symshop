@@ -288,6 +288,36 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/admin/category/display/{id}", name="admin_category_display")
+     */
+    public function categoryDisplay(int $id, CategoryRepository $categoryRepository, EntityManagerInterface $em)
+    {
+        $category = $categoryRepository->findOneBy(['id' => $id]);
+
+        if (!$category) {
+            $this->addFlash('danger' , 'La catégorie demandée n\'existe pas.');
+            return $this->redirectToRoute('admin_category_list');
+        }
+
+        if ($category->getDisplayed()) {
+
+            $category->setDisplayed(false);
+
+            $em->flush();
+
+            $this->addFlash('warning' , 'La catégorie est désormais inactive.');
+            return $this->redirectToRoute('admin_category_list');
+        }
+
+        $category->setDisplayed(true);
+        $this->addFlash('success' , 'La catégorie est désormais active.');
+        
+        $em->flush();
+
+        return $this->redirectToRoute('admin_category_list');
+    }
+
+    /**
      * @Route("/admin/user/list/admins", name="admin_admins_list")
     */
     public function adminList(UserRepository $userRepository) 

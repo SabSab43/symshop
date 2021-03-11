@@ -4,9 +4,11 @@ namespace App\Form;
 
 use App\Entity\Category;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class CategoryType extends AbstractType
 {
@@ -15,8 +17,11 @@ class CategoryType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 "label" => "Nom de la catégorie",
-                "attr" => ["placeholder" => "Tapez le nom de la catégorie"],
-                "required" => false
+                "attr" => ["placeholder" => "Veuillez Taper le nom de la catégorie"],
+            ])
+            ->add('description', TextareaType::class, [
+                "label" => "Description de la catégorie",
+                "attr" => ["placeholder" => "Veuillez décrire la catégorie"],
             ]);
     }
 

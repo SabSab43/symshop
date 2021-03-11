@@ -8,4 +8,5 @@
         Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
     </p>
     <p>Si vous ne recevez aucun email, merci de vérifier votre dossier "spams" ou <a href="{{ path('app_forgot_password_request') }}">renvoyez le mail</a>.</p>
+    <a href="{{ path('security_login') }}" class="btn btn-info">Login</a>
 {% endblock %}

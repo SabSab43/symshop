@@ -3,11 +3,21 @@
 {% block title %} Catégories - {{ category.name }}{% endblock %}
 
 {% block body %}
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ path("homepage") }}">Accueil</a></li>
-        <li class="breadcrumb-item active">{{ category.name }}</li>
-    </ol>
-    <h1>Catégorie: {{ category.name }}</h1>
+    <div class="row">
+        <div class="col-12">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path("homepage") }}">Accueil</a></li>
+                <li class="breadcrumb-item active">{{ category.name }}</li>
+            </ol>
+        </div>
+        <div class="col-12">
+            <h1>Catégorie: {{ category.name }}</h1>
+        </div>
+        <div class="col">
+            <p>{{ category.description }}</p>
+        </div>
+    </div>
+    <hr>
     <div class="row">
         {% set i = 1 %}
         {% for p in category.products %}

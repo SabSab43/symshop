@@ -6,16 +6,36 @@
     <h1>Liste des catégories</h1>
     <table class="table table-hover">
         <thead class="table-dark">
-            <th scope="col">Nom</th>
+            <th>Id</th>
+            <th>Position</th>
+            <th>Nom</th>
+            <th>description</th>
+            <th>Active</th>
             <th>Supprimer</th>
             <th>Éditer</th>
+            <th>Afficher</th>
         </thead>
         <tbody>
             {% for c in categorys %}
             <tr>
+                <td>{{ c.id }}</td>
+                <td>{{ c.position }}</td>
                 <td>{{ c.name }}</td>
+                <td>{{ c.description |  sliceText(0, 50) }}</td>
+                <td>
+                    {% if c.displayed %}
+                        <a href="{{ path('admin_category_display', { 'id': c.id }) }}" class="text-success">
+                            <i class="fas fa-check"></i>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('admin_category_display', { 'id': c.id}) }}" class="text-warning">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    {% endif %}
+                </td>
                 <td><a href="{{ path("admin_category_remove", {"id": c.id}) }}"><button class="btn btn-danger"><i class="fas fa-trash"></i></button></a></td>
                 <td><a href="{{ path("admin_category_edit", {"id": c.id}) }}"><button class="btn btn-primary"><i class="fas fa-edit"></i></button></a></td>
+                <td><a href="{{ path("product_category", {"slug": c.slug}) }}" target="_blank"><button class="btn btn-secondary"><i class="fas fa-eye"></i></button></a></td>
             </tr>
             {% endfor %}
         </tbody>

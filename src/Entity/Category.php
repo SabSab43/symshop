@@ -23,7 +23,7 @@ class Category
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Le nom de la catégorie est obligatoire")
+     * @Assert\NotBlank(message="Le nom de la catégorie est obligatoire.")
      * @Assert\Length(
      *  min=3,
      *  minMessage="Le nom doit avoir au moins {{ limit }} caractères."
@@ -40,6 +40,29 @@ class Category
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="category")
      */
     private $products;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $displayed;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\Length(
+     *  min=50,
+     *  minMessage="La description doit comporter au moins {{ limit }} caractères.",
+     *  max = 255,
+     *  maxMessage="La description doit comporter au maximum {{ limit }} caractères."
+     * )
+     * @Assert\NotBlank(message="La description est obligatoire.")
+     */
+    private $description;
+
+    /**
+     * @ORM\Column(type="integer")
+     * Assert\NotNull(message="La position doit être définie.")
+     */
+    private $position;
 
     public function __construct()
     {
@@ -101,6 +124,42 @@ class Category
                 $product->setCategory(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDisplayed(): ?bool
+    {
+        return $this->displayed;
+    }
+
+    public function setDisplayed(bool $displayed): self
+    {
+        $this->displayed = $displayed;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(int $position): self
+    {
+        $this->position = $position;
 
         return $this;
     }

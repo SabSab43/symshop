@@ -13,7 +13,9 @@
           <li><a class="dropdown-item" href="{{ path("product_show_all") }}">Tous les produits</a></li>
           <li><hr class="dropdown-divider"></li>
           {% for c in categoryRepository.findAll() %}
-            <li><a class="dropdown-item" href="{{ path("product_category", {"slug": c.slug}) }}">{{ c.name }}</a></li>
+            {% if c.displayed %}
+              <li><a class="dropdown-item" href="{{ path("product_category", {"slug": c.slug}) }}">{{ c.name }}</a></li>
+            {% endif %}
           {% endfor %}
         </ul>
       </li>
