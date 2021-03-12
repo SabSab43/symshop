@@ -54,6 +54,11 @@ class CartController extends AbstractController
             return $this->redirectToRoute("cart_show");
         }
 
+        if ($product->getCategory() === null) {
+            return $this->redirectToRoute("product_withoutCategory_show", [
+                "slug" => $product->getSlug()
+            ]);
+        }
         return $this->redirectToRoute("product_show", [
             "category_slug" => $product->getCategory()->getSlug(),
             "slug" => $product->getSlug()

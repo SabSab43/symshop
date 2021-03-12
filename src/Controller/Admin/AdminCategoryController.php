@@ -27,7 +27,9 @@ class AdminCategoryController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $category->setSlug(strtolower($slugger->slug($category->getName())));
+            $category->setSlug(strtolower($slugger->slug($category->getName())))
+                      ->setDisplayed(true)
+            ;
 
             $em->persist($category);
             $em->flush();

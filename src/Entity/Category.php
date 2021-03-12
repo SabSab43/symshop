@@ -58,12 +58,6 @@ class Category
      */
     private $description;
 
-    /**
-     * @ORM\Column(type="integer")
-     * Assert\NotNull(message="La position doit être définie.")
-     */
-    private $position;
-
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -148,18 +142,6 @@ class Category
     public function setDescription(string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getPosition(): ?int
-    {
-        return $this->position;
-    }
-
-    public function setPosition(int $position): self
-    {
-        $this->position = $position;
 
         return $this;
     }

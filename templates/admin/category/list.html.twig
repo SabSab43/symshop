@@ -7,7 +7,6 @@
     <table class="table table-hover">
         <thead class="table-dark">
             <th>Id</th>
-            <th>Position</th>
             <th>Nom</th>
             <th>description</th>
             <th>Active</th>
@@ -19,7 +18,6 @@
             {% for c in categorys %}
             <tr>
                 <td>{{ c.id }}</td>
-                <td>{{ c.position }}</td>
                 <td>{{ c.name }}</td>
                 <td>{{ c.description |  sliceText(0, 50) }}</td>
                 <td>

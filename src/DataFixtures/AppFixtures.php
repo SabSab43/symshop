@@ -90,7 +90,6 @@ class AppFixtures extends Fixture
             $category->setName($faker->department)
                      ->setDisplayed(true)
                      ->setDescription($faker->text(mt_rand(50,160)))
-                     ->setPosition($i)
             ;
 
             $manager->persist($category);
