@@ -57,6 +57,6 @@ services:
         arguments:
             $targetDirectory: '%products_images_directory%'
 
-    App\Controller\AdminController:
+    App\Controller\Admin\AdminProductController:
         arguments:
             $maxForwardProduct: 3

@@ -5,7 +5,11 @@
 {% block body %}
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path("homepage") }}">Accueil</a></li>
-        <li class="breadcrumb-item"><a href="{{ path("product_category", {"slug": product.category.slug}) }}">{{ product.category.name }}</a></li>
+        {% if product.category.name is defined %}
+            <li class="breadcrumb-item"><a href="{{ path("product_category", {"slug": product.category.slug}) }}">{{ product.category.name }}</a></li>
+        {% else %}
+            <li class="breadcrumb-item"><a href="{{ path("product_show_all") }}">Produits</a></li>
+        {% endif %}
         <li class="breadcrumb-item active">{{ product.name }}</li>
     </ol>
     <h1>{{ product.name }}({{ product.price | amount  }})</h1>
@@ -15,7 +19,9 @@
             <p>Toutes les image sutilisées proviennent d'Unsplash: <a href="https://unsplash.com/collections/69645865/symshop" class="link" target="-blank">Lien de la collection</a></p>
         </div>
         <div class="col">
-            <span class="badge badge-primary">{{ product.category.name }}</span>
+            {% if product.category.name is defined %}
+                <span class="badge badge-primary">{{ product.category.name }}</span>
+            {% endif %}
             <p>{{ product.shortDescription }}</p>
             {% include "shared/_flashes.html.twig" %}
             <a href="{{ path("cart_add", {"id": product.id}) }}" class="btn btn-success btn-lg">

@@ -5,5 +5,9 @@
 {% block body %}
 <h1>Édition du produit: {{ product.name }}</h1>
     {% include "/admin/shared/form/_product_form.html.twig" %}
-    <p class="mt-2"><a href="{{ path('product_show', {"slug": product.slug, "category_slug": product.category.slug}) }}" class="link" target="_blank">Lien du produit</a></p>
+     {% if product.category.slug is defined %}
+        <p class="mt-2"><a href="{{ path('product_show', {"slug": product.slug, "category_slug": product.category.slug}) }}" class="link" target="_blank">Lien du produit</a></p>
+    {% else %}
+        <p class="mt-2"><a href="{{ path('product_withoutCategory_show', {"slug": product.slug}) }}" class="link" target="_blank">Lien du produit</a></p>
+    {% endif %}
 {% endblock %}

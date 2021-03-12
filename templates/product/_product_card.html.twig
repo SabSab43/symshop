@@ -2,9 +2,15 @@
     <img src="{{ asset('/uploads/images/products/' ~ p.mainPicture) }}" class="img-fluid" alt="Image du produit" style="height: {{ height }}; width:100%;">
     <div class="card-body">
         <h4 class="card-title">{{ p.name }}({{ p.price | amount }})</h4>
-        <span class="badge badge-info">{{ p.category.name }}</span>
+        {% if p.category.name is defined %}
+            <span class="badge badge-info">{{ p.category.name }}</span>
+        {% endif %}
         <p class="card-text">{{ p.shortDescription | sliceText(0, 75)}}</p>
-        <a href="{{ path("product_show", { "category_slug": p.category.slug, "slug": p.slug}) }}" class="btn btn-primary btn-sm">Détails</a>
+        {% if p.category.slug is defined %}
+            <a href="{{ path("product_show", { "category_slug": p.category.slug, "slug": p.slug}) }}" class="btn btn-primary btn-sm">Détails</a>
+        {% else %}
+            <a href="{{ path("product_withoutCategory_show", {"slug": p.slug}) }}" class="btn btn-primary btn-sm">Détails</a>    
+        {% endif %}
         <a href="{{ path("cart_add", {"id": p.id}) }}" class="btn btn-success btn-sm">Ajouter</a>
     </div>
 </div>

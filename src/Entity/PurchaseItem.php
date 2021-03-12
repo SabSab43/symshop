@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\PurchaseItemRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\JoinColumn;
+use App\Repository\PurchaseItemRepository;
 
 /**
  * @ORM\Entity(repositoryClass=PurchaseItemRepository::class)
@@ -19,6 +20,7 @@ class PurchaseItem
 
     /**
      * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="purchaseItems")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      */
     private $product;
 

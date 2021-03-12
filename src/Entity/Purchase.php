@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\JoinColumn;
 use App\Repository\PurchaseRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
@@ -57,6 +58,7 @@ class Purchase
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="purchases")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      */
     private $user;
 
