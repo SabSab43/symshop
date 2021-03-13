@@ -32,14 +32,14 @@ class AdminPurchaseController extends AbstractController
         $purchase = $purchaseRepository->find($id);
 
         if (!$purchase) {
-            $this->addFlash("danger", "la commande sélectionnée n'existe pas.");
+            $this->addFlash("danger", "La commande sélectionnée n'existe pas.");
             return $this->redirectToRoute("admin_purchase_list");
         }
 
         $em->remove($purchase);
         $em->flush();
 
-        $this->addFlash("success", "la commande a bien été supprimée.");
+        $this->addFlash("success", "La commande a bien été supprimée.");
 
         return $this->redirectToRoute("admin_purchase_list");
     }
