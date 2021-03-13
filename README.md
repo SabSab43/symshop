@@ -12,11 +12,15 @@ Pour installer les dépendances (nécessite Composer):
     composer install
     
     
-# Configuration du fichier .env:
+# Configuration des varables d'environnement:
 
-Ce fichier se situe à la racine du projet.
+Définissez vos variables d'environnement directement sur votre système ou bien dans un fichier .env, exemple: 
 
-Vous devez définir les variaibles suivantes avec vos informations:
+    .env.local
+
+Vous devez définir les variaibles d'environnement suivantes avec vos informations:
+
+    APP_SECRET=VOTRE_CLE_SECRETE
 
     DATABASE_URL="mysql://DB_USER:DB_PASSWORD@DB_ADDRESS:DB_PORT/DB_NAME?serverVersion=5.7"
 
