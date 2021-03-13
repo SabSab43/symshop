@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+    
+    
+
+    <div class="row justify-content-left">
+        <div class="col-4 offset-sm-2">
+            <h1>Inscription</h1>
+        </div>
+        <div class="col-8 offset-sm-2">
+            {% include "shared/_flashes.html.twig" %}
+        </div>
+    </div>
+<div class="row align-items-center">
+    <div class="col-12">
+    {{ form_start(registrationForm) }}
+        <div class="row justify-content-left">
+            <div class="col-4 offset-sm-2">
+                {{ form_row(registrationForm.email) }}
+            </div>
+        </div>
+        <div class="row justify-content-left">
+            <div class="col-4 offset-sm-2">
+                {{ form_row(registrationForm.firstName) }}
+            </div>
+            <div class="col-4">
+                {{ form_row(registrationForm.lastName) }}
+            </div>
+        </div>
+        <div class="row justify-content-left">
+            <div class="col-4 offset-sm-2">
+                {{ form_row(registrationForm.password) }}
+            </div>
+            <div class="col-4">
+                {{ form_row(registrationForm.confirmPassword) }}
+            </div>
+        </div>
+        <div class="row justify-content-left">
+            <div class="col-4  offset-sm-2">
+                {{ form_row(registrationForm.agreeTerms) }}
+            </div>
+        </div>
+        <div class="row justify-content-left">
+            <div class="col-4 offset-sm-2">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt mr-1"></i>Inscription</button>
+            </div>
+        </div>
+        {{ form_widget(registrationForm) }}
+
+    </div>
+</div>
+    {{ form_end(registrationForm) }}
+{% endblock %}

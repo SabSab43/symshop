@@ -52,10 +52,9 @@ class UserService
     }
     
     /**
-     * Return true if user is valid and create it, return false if user is not valid
+     * Create a new user with form data;
      *
      * @param  FormInterface $form
-     * @return bool
      */
     public function createUser(FormInterface $form)
     {         
@@ -66,13 +65,13 @@ class UserService
         if(!$this->checkPasswords($user->getPassword(), $confirmPassword))
         {
             $this->flashbag->add("danger", "Les mots de passe ne sont pas identiques.");
-            return false;
+            return;
         }
         
         if ($this->emailExist($user->getEmail())) 
         {
             $this->flashbag->add("danger", "cette adresse email est déjà liée à un compte, merci d'en choisir une autre.");
-            return false;
+            return;
         }
 
         $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
@@ -80,7 +79,7 @@ class UserService
         $this->em->persist($user);
         $this->em->flush();
 
-        return true;
+        $this->flashbag->add("success", "Votre inscription a bien été effecuée, vous pouvez désormais vous connecter à votre comtpe.");
     }
     
     /**
@@ -90,7 +89,7 @@ class UserService
      * @param  string $confirmPassword
      * @return bool
      */
-    private function checkPasswords(string $password, string $confirmPassword): bool
+    public function checkPasswords(string $password, string $confirmPassword): bool
     {
         return $password === $confirmPassword;
     }

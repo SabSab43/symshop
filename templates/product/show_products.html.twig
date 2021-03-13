@@ -3,10 +3,15 @@
 {% block title %}Boutique{% endblock %}
 
 {% block body %}
+{% if category is defined %}
+    <h1>{{ category.name }}</h1>
+    <p>{{ category.description }}</p>
+{% else %}
     <h1>Liste de tous nos produits</h1>
-    {% set i = 1 %}
+{% endif %}
+    <hr>
+    {% set i, j = 1, 1 %}
     {% for product in products %}
-
         {% if i == 1 %}
             <div class="row mb-5">
         {% endif %}
@@ -17,10 +22,12 @@
 
         {% set i = i + 1 %}
 
-        {% if i == 5 %}
+        {% if i == 5 or j == products|length %}
             {% set i = 1 %}
             </div>
         {% endif %}
 
+        {% set j = j + 1 %}
+        
     {% endfor %}
 {% endblock %}

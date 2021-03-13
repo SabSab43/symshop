@@ -6,6 +6,7 @@ use App\Entity\Category;
 use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\Category\CategoryService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,27 +18,20 @@ class AdminCategoryController extends AbstractController
     /**
      * @Route("/admin/category/create", name="admin_category_create")
      */
-    public function categoryCreate(Request $request, SluggerInterface $slugger, EntityManagerInterface $em): Response
+    public function categoryCreate(Request $request, EntityManagerInterface $em): Response
     {
         $category = new Category;
 
         $form = $this->createForm(CategoryType::class, $category);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $category->setSlug(strtolower($slugger->slug($category->getName())))
-                      ->setDisplayed(true)
-            ;
 
             $em->persist($category);
             $em->flush();
 
             $this->addFlash("success", "Votre nouvelle catégorie a bien été créée.");
-
-
-            return $this->redirectToRoute("admin_category_create");
+            return $this->redirectToRoute("admin_category_list");
         }
 
         return $this->render('admin/category/create.html.twig', [
@@ -48,28 +42,22 @@ class AdminCategoryController extends AbstractController
     /**
      * @Route("/admin/category/edit/{id}", name="admin_category_edit")
      */
-    public function categorysEdit(int $id, CategoryRepository $categoryRepository, Request $request, SluggerInterface $slugger, EntityManagerInterface $em)
+    public function categorysEdit(int $id, CategoryRepository $categoryRepository, Request $request, CategoryService $categoryService)
     {
 
         $category = $categoryRepository->find($id);
-
-        if (!$category) {
+        if (!$category)
+        {
             $this->addFlash("danger", "La catégorie demandée n'existe pas.");
+            return $this->redirectToRoute("admin_category_list");
         }
 
         $form = $this->createForm(CategoryType::class, $category);
-
         $form->handleRequest($request);
         
-        if ($form->isSubmitted() && $form->isValid()) {
-            $category->setSlug(strtolower($slugger->slug($category->getName())));
-            $em->flush();
-
-            $this->addFlash("success", "Votre catégorie a bien été modifiée.");
-
-            return $this->redirectToRoute("admin_category_edit", [
-                "id" =>$category->getId()
-            ]);
+        if ($form->isSubmitted() && $form->isValid()) 
+        {
+            $categoryService->editCategory($category);
         }
 
         return $this->render('admin/category/edit.html.twig', [   
@@ -84,7 +72,8 @@ class AdminCategoryController extends AbstractController
     public function categoryRemove(int $id, EntityManagerInterface $em, CategoryRepository $categoryRepository)
     {
         $category = $categoryRepository->find($id);
-        if (!$category) {
+        if (!$category) 
+        {
             $this->addFlash("danger", "La catégorie que vous essayez de supprimer n'existe pas.");
             return $this->redirectToRoute("admin_category_list");
         }
@@ -93,7 +82,6 @@ class AdminCategoryController extends AbstractController
         $em->flush();
 
         $this->addFlash("success", "La catégorie a bien été supprimée.");
-
         return $this->redirectToRoute("admin_category_list");
     }   
 
@@ -116,26 +104,24 @@ class AdminCategoryController extends AbstractController
     {
         $category = $categoryRepository->findOneBy(['id' => $id]);
 
-        if (!$category) {
+        if (!$category) 
+        {
             $this->addFlash('danger' , 'La catégorie demandée n\'existe pas.');
             return $this->redirectToRoute('admin_category_list');
         }
 
-        if ($category->getDisplayed()) {
-
+        if ($category->getDisplayed()) 
+        {
             $category->setDisplayed(false);
-
-            $em->flush();
-
             $this->addFlash('warning' , 'La catégorie est désormais inactive.');
-            return $this->redirectToRoute('admin_category_list');
+        } 
+        else
+        {
+            $category->setDisplayed(true);
+            $this->addFlash('success' , 'La catégorie est désormais active.');
         }
 
-        $category->setDisplayed(true);
-        $this->addFlash('success' , 'La catégorie est désormais active.');
-        
         $em->flush();
-
         return $this->redirectToRoute('admin_category_list');
     }
 

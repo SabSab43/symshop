@@ -6,7 +6,7 @@ use App\Entity\Category;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
- * Creates a Slug for new Category
+ * Create a Slug for a new Category
  */
 class CategorySlugListener 
 {    
@@ -23,8 +23,17 @@ class CategorySlugListener
     }
 
     public function prePersist(Category $entity)
-    {
-        if (empty($entity->getSlug())) {
+    {       
+        if (!empty($entity->getName()))
+        {
+            $entity->setSlug(strtolower($this->slugger->slug($entity->getName())));   
+        }         
+    }
+
+    public function preFlush(Category $entity)
+    {       
+        if (!empty($entity->getId()))
+        {
             $entity->setSlug(strtolower($this->slugger->slug($entity->getName())));   
         }         
     }

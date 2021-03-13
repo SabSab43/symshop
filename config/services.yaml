@@ -51,6 +51,11 @@ services:
                 name: "doctrine.orm.entity_listener",
                 event: "prePersist",
                 entity: App\Entity\Category
+            },
+            {
+                name: "doctrine.orm.entity_listener",
+                event: "preFlush",
+                entity: App\Entity\Category
             }
         ]
     App\Service\FileUploader\ProductFileUploader:

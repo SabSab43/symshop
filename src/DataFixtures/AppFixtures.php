@@ -58,6 +58,7 @@ class AppFixtures extends Fixture
             ->setRoles(['ROLE_ADMIN'])
             ->setLastName('Saby')
             ->setFirstName('Lucas')
+            ->setIsVerified(true)
         ;
         
         $manager->persist($admin);
@@ -72,6 +73,7 @@ class AppFixtures extends Fixture
                 ->setPassword($hash)
                 ->setLastName($faker->lastName())
                 ->setFirstName($faker->firstName())
+                ->setIsVerified(true)
             ;
 
             $users[] = $user;
