@@ -50,6 +50,6 @@ Lancez ensuite la commande suivante:
 
  # Lancer le serveur
  
-Vous pouvez maintenant lancer le sevreur en entrant la commande suivante (veillez à bien être dans le répertoire du projet):
+Vous pouvez maintenant lancer le serveur en entrant la commande suivante (veillez à bien être dans le répertoire du projet):
 
     symfony serve
