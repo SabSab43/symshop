@@ -4,13 +4,16 @@
 
 {% block body %}
     <h1>Liste des utilisateurs</h1>
-    <table class="table table-hover">
+    <hr>
+    <table class="table table-hover table-striped">
         <thead class="table-dark">
             <th scope="col">Nom/Prénom</th>
             <th>Email</th>
             <th>Nb/Commandes</th>
+            <th>État du compte</th>
             <th>Supprimer</th>
             <th>Éditer</th>
+            <th>Rendre administrateur</th>
         </thead>
         <tbody>
             {% for u in users %}
@@ -18,8 +21,24 @@
                     <td>{{ u.lastName}} {{ u.firstName }}</td>
                     <td>{{ u.email }}</td>
                     <td>{{ u.purchases | length }}</td>
+                    {% if u.isverified %}
+                        <td class="text-success">Actif</td>
+                    {% else %}
+                        <td class="text-warning">Non vérifié</td>
+                    {% endif %}
                     <td><a href="{{ path("admin_user_remove", {"id": u.id}) }}"><button class="btn btn-danger"><i class="fas fa-trash"></i></button></a></td>
                     <td><a href="{{ path("admin_user_edit", {"id": u.id}) }}"><button class="btn btn-primary"><i class="fas fa-edit"></i></button></a></td>
+                    {% set isAdmin = false %}    
+                    {% for role in u.roles %}
+                        {% if role == "ROLE_ADMIN"%}
+                            {% set isAdmin = true %}
+                        {% endif %}
+                    {% endfor %}   
+                    {% if isAdmin == true %}
+                        <td class="text-info">Déjà administrateur !</td>    
+                    {% else  %}
+                        <td><a href="{{ path("admin_user_upgrade", {"id": u.id}) }}" class="btn btn-warning"><i class="far fa-star"></i></a></td>
+                    {% endif %}                     
                 </tr>
             {% endfor %}
         </tbody>

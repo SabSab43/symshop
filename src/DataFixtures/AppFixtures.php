@@ -51,7 +51,7 @@ class AppFixtures extends Fixture
 
         $admin = new User;
 
-        $hash = $this->encoder->encodePassword($admin, 'admin123VerySafe');
+        $hash = $this->encoder->encodePassword($admin, 'adminVerySafePassword123');
 
         $admin->setEmail('admin@gmail.com')
             ->setPassword($hash)
@@ -67,7 +67,7 @@ class AppFixtures extends Fixture
 
         for ($u=0; $u < 5; $u++) { 
             $user = new User;
-            $hash = $this->encoder->encodePassword($user, 'user123VerySafe');
+            $hash = $this->encoder->encodePassword($user, 'verySafePassword123');
 
             $user->setEmail("user$u@gmail.com")
                 ->setPassword($hash)
@@ -112,11 +112,14 @@ class AppFixtures extends Fixture
                         ->setMainPicture("product-picture-($p).jpg")
                         ->setShortDescription($faker->paragraph())
                         ->setIsForward(false)
+                        ->setIsDisplayed(true)
                 ;
                 // set one forward product by category
                 if ($isForward === 1) {
                     $isForward--;
-                    $product->setIsForward(true);
+                    $product->setIsForward(true)
+                            ->setIsDisplayed(true)
+                    ;
                 }
 
                 $products[] = $product;                        

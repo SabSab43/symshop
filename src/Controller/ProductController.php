@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Repository\ProductRepository;
 use App\Repository\CategoryRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,6 +25,10 @@ class ProductController extends AbstractController
 
         if (!$product) {
             throw $this->createNotFoundException("Le produit demandé n'existe pas.");
+        }
+
+        if (!$product->getIsDisplayed()) {
+            return $this->redirectToRoute("homepage");
         }
 
         return $this->render('product/show.html.twig', [
@@ -59,11 +64,11 @@ class ProductController extends AbstractController
             'slug' => $slug
         ]);    
         
-        if (!$category) {
-            throw $this->createNotFoundException("La catégorie demandée n'existe pas.");
+        if (!$category || !$category->getDisplayed())
+        {
+            return $this->redirectToRoute("homepage");
         }
-        
-        $products = $productRepository->findBy(["category" => $category->getId()]);
+        $products = $productRepository->findBy(["category" => $category->getId(), 'isDisplayed' => true]);
 
         return $this->render('product/show_products.html.twig', [
             'slug' => $slug,
@@ -77,7 +82,7 @@ class ProductController extends AbstractController
      */
     public function showAllProducts(ProductRepository $productRepository): Response
     {
-        $products = $productRepository->findAll();
+        $products = $productRepository->findBy(['isDisplayed' => true]);
 
         return $this->render('product/show_products.html.twig', [
             'products' => $products

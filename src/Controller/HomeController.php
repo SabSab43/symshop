@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\ProductRepository;
+use App\Service\Product\ProductService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,14 +17,16 @@ class HomeController extends AbstractController
     /**
      * @Route("/", name="homepage")
      */
-    public function homepage(ProductRepository $productRepository): Response
+    public function homepage(ProductRepository $productRepository, ProductService $productService): Response
     {
-        $products = $productRepository->findBy(['isForward' => true]);
+        $nbForwardsProducts = $productRepository->count(['isForward' => true]);
+        
+        $forwardsProducts = $productService->HandleForwardsproducts($nbForwardsProducts, 3);
 
         return $this->render('home/home.html.twig', [
             'controller_name' => 'HomeController',
             'title' => 'Accueil',
-            'products' =>$products
+            'products' =>$forwardsProducts
         ]);
     }
 }

@@ -19,7 +19,7 @@ class UserService
      *
      * @var FlashBagInterface
      */
-    private $flashbag;   
+    private $flashBag;   
 
     /**
      * userRepository
@@ -45,7 +45,7 @@ class UserService
 
     public function __construct(FlashBagInterface $flashBag, UserRepository $userRepository, UserPasswordEncoderInterface $encoder, EntityManagerInterface $em)
     {
-        $this->flashbag =$flashBag;
+        $this->flashBag =$flashBag;
         $this->userRepository = $userRepository;
         $this->encoder = $encoder;
         $this->em = $em;
@@ -64,13 +64,13 @@ class UserService
 
         if(!$this->checkPasswords($user->getPassword(), $confirmPassword))
         {
-            $this->flashbag->add("danger", "Les mots de passe ne sont pas identiques.");
+            $this->flashBag->add("danger", "Les mots de passe ne sont pas identiques.");
             return;
         }
         
         if ($this->emailExist($user->getEmail())) 
         {
-            $this->flashbag->add("danger", "cette adresse email est déjà liée à un compte, merci d'en choisir une autre.");
+            $this->flashBag->add("danger", "cette adresse email est déjà liée à un compte, merci d'en choisir une autre.");
             return;
         }
 
@@ -79,9 +79,9 @@ class UserService
         $this->em->persist($user);
         $this->em->flush();
 
-        $this->flashbag->add("success", "Votre inscription a bien été effecuée, vous pouvez désormais vous connecter à votre comtpe.");
+        $this->flashBag->add("success", "Votre inscription a bien été effecuée, vous pouvez désormais vous connecter à votre comtpe.");
     }
-    
+
     /**
      * check if passwords are same or not
      *
@@ -106,5 +106,34 @@ class UserService
             return true;
         }
         return false;
+    }
+
+    public function setAdmin(User $user, bool $isConfirmed)
+    {
+        if ($isConfirmed)
+        {
+            $user->setRoles(["ROLE_ADMIN"]);
+            $this->em->flush();
+            $this->flashBag->add("success", "L'utilisateur est désormais administrateur.");
+        }
+        else
+        {
+            $user->setRoles(["ROLE_ADMIN"]);
+            $this->flashBag->add("info", "L'utilisateur n'a pas été promu.");
+        }
+    }
+
+    public function unsetAdmin(User $admin, bool $isConfirmed)
+    {
+        if ($isConfirmed) 
+            {
+                $admin->setRoles([]);
+                $this->em->flush();
+                $this->flashBag->add("success", "L'utilisateur a bien été rétrogradé.");
+            }
+        else
+            {
+                $this->flashBag->add("info", "L'utilisateur n'a pas  été rétrogradé.");
+            }
     }
 }

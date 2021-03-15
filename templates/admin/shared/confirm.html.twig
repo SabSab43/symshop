@@ -1,0 +1,47 @@
+{% extends "admin/base.html.twig" %}
+
+{% block title %}Confirmation de suppression {% endblock %}
+
+{% block body %}
+<div class="row justify-content-center" style="height: 100%;">
+    <div class="row align-self-center " style="height: 33%">
+        <div class="col-12 text-center">
+            {% if entity == "utilisateur" %}
+                <h1>Êtes-vous sûr de vouloir supprimer cet {{ entity }} ?</h1>     
+            {% elseif entity == "produit" %}
+                <h1>Êtes-vous sûr de vouloir supprimer ce {{ entity }} ?</h1>     
+            {% elseif entity == "catégorie" %}
+                <h1>Êtes-vous sûr de vouloir supprimer cette {{ entity }} ?</h1>  
+            {% elseif entity == "administrateur" %}
+                <h1>Suppression du statut administrateur de l'utilisateur suivant: {{ admin.firstname }} {{ admin.lastName }}</h1>  
+            {% elseif entity == "newAdmin" %}
+                <h1>Rende {{ user.firstname }} {{ user.lastName }} administrateur</h1>  
+            {% endif %}
+        </div>
+        <div class="col-12 text-center">
+        {% if entity == "administrateur" %}
+            <p class="lead text-danger">Êtes-vous sûr de vouloir rétrograder {{ admin.firstname }} {{ admin.lastName }} ?</p>
+        {% elseif entity == "newAdmin" %}
+            <p class="lead">Êtes-vous sûr de vouloir rendre {{ user.firstname }} {{ user.lastName }} administrateur ?</p>
+        {% else %}
+            <p class="lead text-danger">Attention, cette action est <strong style="text-decoration: underline;">irréversible</strong> !</p>    
+        {% endif %}
+        </div>
+        <div class="col-12 text-center">
+            {{ form_start(confirmView)}}
+                {{ form_widget(confirmView)}}
+                <div class="row justify-content-center">
+                {% if entity == "newAdmin" %}
+                    <button type="submit" class="btn btn-success">Confirmer la promotion</button>
+                {% else %}
+                    <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+                {% endif %}
+                </div>
+            {{ form_end(confirmView)}}
+            <div class="row justify-content-center pt-3">
+                <a href="{{ path(path) }}" class="btn btn-secondary">Annuler</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -4,15 +4,29 @@
 
 {% block body %}
     <h1>Gestion des produits</h1>
-
+    <hr>
+    <p>
+        Il y a actuellement {{ nbProducts }} produits en ligne.
+        <br>
+        Il y a actuellement {{ productsDisplayed }} produits affichés.
+        <br>
+        Il y a actuellement {{ ForwardProducts|length }} produits mis en avant.
+    </p>
     <h2>Liste des produits vedettes</h2>
-    <table class="table table-hover">
+    <hr>
+    <p>
+        Le nombre maximum de produits mis en avant est fixé à {{ MaxForwardProducts }}. 
+        <br>
+        Si il y en a moins, un produit choisi au hasard sera affiché à chaque actualisation de la page d'accueil.
+    </p>
+    <table class="table table-hover table-striped">
         <thead class="table-dark">
             <th scope="col">Nom</th>
             <th>Image</th>
             <th>Prix</th>
             <th>Catégorie</th>
             <th>Description</th>
+            <th>Affiché</th>
             <th>Supprimer</th>
             <th>Éditer</th>
             <th>Retirer produit vedette</th>
@@ -29,6 +43,17 @@
                     <td class="text-danger">Aucune catégorie</td>
                 {% endif %}
                 <td>{{ p.shortDescription | sliceText(0, 50) }}</td> 
+                <td>
+                    {% if p.isDisplayed %}
+                        <a href="{{ path('admin_product_display', { 'id': p.id }) }}" class="text-success">
+                            <i class="fas fa-check"></i>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('admin_product_display', { 'id': p.id}) }}" class="text-warning">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    {% endif %}
+                </td>
                 <td><a href="{{ path("admin_product_remove", {"id": p.id}) }}"><button class="btn btn-danger"><i class="fas fa-trash"></i></button></a></td>
                 <td><a href="{{ path("admin_product_edit", {"id": p.id}) }}"><button class="btn btn-primary"><i class="fas fa-edit"></i></button></a></td>
                 <td><a href="{{ path("admin_product_unsetForward", {"id": p.id}) }}"><button class="btn btn-warning"><i class="far fa-star"></i></button></a></td>
@@ -38,13 +63,15 @@
     </table>
 
     <h2>Liste des produits</h2>
-    <table class="table table-hover">
+    <hr>
+    <table class="table table-hover table-striped">
         <thead class="table-dark">
             <th scope="col">Nom</th>
             <th>Image</th>
             <th>Prix</th>
             <th>Catégorie</th>
             <th>Description</th>
+            <th>Affiché</th>
             <th>Supprimer</th>
             <th>Éditer</th>
             <th>Ajouter produit vedette</th>
@@ -61,9 +88,24 @@
                     <td class="text-danger">Aucune catégorie</td>
                 {% endif %}
                 <td>{{ p.shortDescription | slice(0, 50)}}[...]</td> 
+                <td>
+                    {% if p.isDisplayed %}
+                        <a href="{{ path('admin_product_display', { 'id': p.id }) }}" class="text-success">
+                            <i class="fas fa-check"></i>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('admin_product_display', { 'id': p.id}) }}" class="text-warning">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    {% endif %}
+                </td>
                 <td><a href="{{ path("admin_product_remove", {"id": p.id}) }}"><button class="btn btn-danger"><i class="fas fa-trash"></i></button></a></td>
                 <td><a href="{{ path("admin_product_edit", {"id": p.id}) }}"><button class="btn btn-primary"><i class="fas fa-edit"></i></button></a></td>
-                <td><a href="{{ path("admin_product_setForward", {"id": p.id}) }}"><button class="btn btn-success"><i class="fas fa-star"></i></button></a></td>
+                {% if p.isDisplayed %}
+                    <td><a href="{{ path("admin_product_setForward", {"id": p.id}) }}"><button class="btn btn-success"><i class="fas fa-star"></i></button></a></td>
+                {% else %}
+                    <td colspan="1" class="text-danger" style="max-width: 150px;">Le produit doit être affiché pour pouvoir être mis en avant.</td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>

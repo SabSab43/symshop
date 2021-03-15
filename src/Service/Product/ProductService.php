@@ -80,5 +80,30 @@ class ProductService
 
         $this->em->flush();        
     }
+    
+    /**
+     * Return all forwards products, if does not enought forwards products, it will completed with randoms products instead 
+     *
+     * @param  int $nbForwardsProducts
+     * @param  int $maxForwards
+     * @return array $forwardsProducts
+     */
+    public function HandleForwardsproducts(int $nbForwardsProducts, int $maxForwards)
+    {
+        $forwardsProducts = $this->productRepository->findBy(['isForward' => true]);
+
+        if ($nbForwardsProducts < $maxForwards) 
+        {
+            $notForwardsProducts= $this->productRepository->findBy(['isForward' => false]);
+            $nbNotForwardsProducts = count($notForwardsProducts);
+
+            while ($nbForwardsProducts < $maxForwards)
+            {
+                $forwardsProducts[] = $notForwardsProducts[mt_rand(0, $nbNotForwardsProducts-1)];
+                $nbForwardsProducts++;
+            }
+        }
+        return $forwardsProducts;
+    }
 
 }

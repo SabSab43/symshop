@@ -3,8 +3,10 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Category;
+use App\Form\ConfirmType;
 use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
+use App\Service\Remover\RemoverService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\Category\CategoryService;
 use Symfony\Component\HttpFoundation\Request;
@@ -69,20 +71,32 @@ class AdminCategoryController extends AbstractController
     /**
      * @Route("/admin/category/remove/{id}", name="admin_category_remove")
     */
-    public function categoryRemove(int $id, EntityManagerInterface $em, CategoryRepository $categoryRepository)
+    public function categoryRemove(int $id, CategoryRepository $categoryRepository, Request $request, RemoverService $removerService)
     {
         $category = $categoryRepository->find($id);
+       
         if (!$category) 
         {
             $this->addFlash("danger", "La catégorie que vous essayez de supprimer n'existe pas.");
             return $this->redirectToRoute("admin_category_list");
         }
 
-        $em->remove($category);
-        $em->flush();
+        $form =$this->createForm(ConfirmType::class);
+        $form->handleRequest($request);
 
-        $this->addFlash("success", "La catégorie a bien été supprimée.");
-        return $this->redirectToRoute("admin_category_list");
+        if ($form->isSubmitted() && $form->isValid()) 
+        {
+            if ($form->get('confirm')->getData() !== null) 
+            {
+                $removerService->Remove($form->get('confirm')->getData(), $category, "catégorie");
+            }
+            return $this->redirectToRoute("admin_category_list");
+        }
+        return $this->render("admin/shared/confirm.html.twig", [
+            "entity" => "catégorie",
+            "confirmView" => $form->createView(),
+            "path" => "admin_category_list"
+        ]);
     }   
 
     /**
@@ -124,5 +138,4 @@ class AdminCategoryController extends AbstractController
         $em->flush();
         return $this->redirectToRoute('admin_category_list');
     }
-
 }

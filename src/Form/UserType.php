@@ -57,18 +57,6 @@ class UserType extends AbstractType
                     ],
                 ]);
             }
-
-            if ($user && null !== $user->getId()) {
-                $form->add('roles', ChoiceType::class, [    
-                    'choices' => [
-                        'Utilisateur' => 'ROLE_USER',
-                        'Administrateur' => 'ROLE_ADMIN'
-                    ],
-                    'expanded' => true,
-                    'multiple' => true,
-                    'label' => 'Rôles' 
-                ]);
-            }
         });
     }
 

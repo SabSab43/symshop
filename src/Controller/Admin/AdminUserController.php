@@ -2,82 +2,26 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\User;
+use App\Form\ConfirmType;
 use App\Form\UserType;
-use App\Service\User\UserService;
 use App\Repository\UserRepository;
+use App\Service\Remover\RemoverService;
+use App\Service\User\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AdminUserController extends AbstractController
 {
-    
-
     /**
-     * @Route("/admin/user/list/admins", name="admin_admins_list")
-    */
-    public function adminList(UserRepository $userRepository) 
-    {
-        $admins = $userRepository->findAll();
-
-        return $this->render("admin/user/admins_list.html.twig", [
-            "admins" => $admins
-        ]);
-    }
-
-    /**
-     * @Route("/admin/downgrade/{id}", name="admin_downgrade_role")
-    */
-    public function adminDowngrade(int $id, UserRepository $userRepository, EntityManagerInterface $em) 
-    {
-        $admin = $userRepository->find($id);
-
-        if (!$admin) {
-            $this->addFlash("danger", "vous devez sélectionner un administrateur valide pour pouvoir le rétrograder");
-
-            return $this->redirectToRoute("admin_admins_list");
-        }
-
-        $admin->setRoles([]);
-        $em->flush();
-
-        return $this->redirectToRoute("admin_admins_list");
-    }
-
-    /**
-     * @Route("/admin/user/list/users", name="admin_user_list")
+     * @Route("/admin/user/list", name="admin_user_list")
     */
     public function usersList(UserRepository $userRepository) 
     {
         $users = $userRepository->findAll();
         return $this->render("admin/user/list.html.twig", [
             "users" => $users
-        ]);
-    }
-
-    /**
-     * @Route("/admin/user/create", name="admin_user_create")
-     */
-    public function userCreate(Request $request, UserService $userService): Response
-    {
-        $form = $this->createForm(UserType::class, new User);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            if ($userService->createUser($form) === false) {
-                return $this->redirectToRoute("admin_user_create");
-            }
-
-            $this->addFlash("success", "Votre nouvel utilisateur a bien été créé.");
-            return $this->redirectToRoute("admin_user_create");
-        }
-
-        return $this->render('admin/user/create.html.twig', [
-            "formView" => $form->createView()
         ]);
     }
 
@@ -98,9 +42,7 @@ class AdminUserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $em->flush();
-
             $this->addFlash("success", "Votre utilisateur a bien été modifiée.");
-
             return $this->redirectToRoute("admin_user_edit", [
                 "id" =>$user->getId()
             ]);
@@ -115,20 +57,110 @@ class AdminUserController extends AbstractController
     /**
      * @Route("/admin/user/remove/{id}", name="admin_user_remove")
     */
-    public function userRemove(int $id, EntityManagerInterface $em, UserRepository $userRepository)
+    public function userRemove(int $id, EntityManagerInterface $em, UserRepository $userRepository, Request $request, RemoverService $removerService)
     {
         $user = $userRepository->find($id);
-        if (!$user) {
+
+        if (!$user)
+        {
             $this->addFlash("danger", "L'utilisateur que vous essayez de supprimer n'existe pas.");
             return $this->redirectToRoute("admin_user_list");
         }
 
-        $em->remove($user);
-        $em->flush();
+        $form =$this->createForm(ConfirmType::class);
+        $form->handleRequest($request);
 
-        $this->addFlash("success", "L'utilisateur a bien été supprimé.");
-
-        return $this->redirectToRoute("admin_user_list");
+        if ($form->isSubmitted() && $form->isValid()) 
+        {
+            if ($form->get('confirm')->getData() !== null) 
+            {
+                $removerService->Remove($form->get('confirm')->getData(), $user, "utilisateur");
+            }
+            return $this->redirectToRoute("admin_user_list");
+        }
+        return $this->render("admin/shared/confirm.html.twig", [
+            "entity" => "utilisateur",
+            "confirmView" => $form->createView(),
+            "path" => "admin_user_list"
+        ]);
     } 
+
+    /**
+     * @Route("/admin/user/list/admins", name="admin_user_admins")
+    */
+    public function adminList(UserRepository $userRepository) 
+    {
+        $admins = $userRepository->findAll();
+
+        return $this->render("admin/user/admins_list.html.twig", [
+            "admins" => $admins
+        ]);
+    }
+
+    /**
+     * @Route("/admin/downgrade/{id}", name="admin_downgrade_role")
+    */
+    public function unsetAdmin(int $id, UserRepository $userRepository, Request $request, UserService $userService) 
+    {
+        $admin = $userRepository->find($id);
+
+        if (!$admin)
+        {
+            $this->addFlash("danger", "vous devez sélectionner un administrateur valide pour pouvoir le rétrograder");
+            return $this->redirectToRoute("admin_user_admins");
+        }
+
+        $form = $this->createForm(ConfirmType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) 
+        {
+            $userService->unsetAdmin($admin, $form->get('confirm')->getData());
+            return $this->redirectToRoute("admin_user_admins");            
+        }
+
+        return $this->render("admin/shared/confirm.html.twig", [
+            "entity" => "administrateur",
+            "admin" => $admin,
+            "confirmView" => $form->createView(),
+            "path" => "admin_user_admins"
+        ]);
+    }
+
+    /**
+     * @Route("/admin/user/set-admin/{id}", name="admin_user_upgrade")
+     */
+    public function userSetAdmin(int $id, UserRepository $userRepository, Request $request, UserService $userService)
+    {
+        $user = $userRepository->find($id);
+
+        if ($user === null)
+        {
+            $this->addFlash("danger", "Cet utilisateur n'existe pas.");
+            return $this->redirectToRoute("admin_user_list");
+        }
+
+        if ($user->getRoles() === "[ROLE_ADMIN]")
+        {
+            $this->addFlash("danger", "Cet utilisateur est déjà administrateur.");
+            return $this->redirectToRoute("admin_user_list");
+        }
+
+        $form = $this->createForm(ConfirmType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $userService->setAdmin($user, $form->get('confirm')->getData());
+            return $this->redirectToRoute("admin_user_list");
+        }
+        
+        return $this->render("admin/shared/confirm.html.twig", [
+            "entity" => "newAdmin",
+            "user" => $user,
+            "confirmView" => $form->createView(),
+            "path" => "admin_user_list"
+        ]);
+    }
 
 }

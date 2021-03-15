@@ -12,22 +12,21 @@
     <hr>
     {% set i, j = 1, 1 %}
     {% for product in products %}
-        {% if i == 1 %}
-            <div class="row mb-5">
-        {% endif %}
+            {% if i == 1 %}
+                <div class="row mb-5">
+            {% endif %}
 
-        <div class="col-3">
-            {% include "/product/_product_card.html.twig" with {"p": product, "height": "250px"} %}
-        </div>
-
-        {% set i = i + 1 %}
-
-        {% if i == 5 or j == products|length %}
-            {% set i = 1 %}
+            <div class="col-3">
+                {% include "/product/_product_card.html.twig" with {"p": product, "height": "250px"} %}
             </div>
-        {% endif %}
 
-        {% set j = j + 1 %}
-        
+            {% set i = i + 1 %}
+
+            {% if i == 5 or j == products|length %}
+                {% set i = 1 %}
+                </div>
+            {% endif %}
+
+            {% set j = j + 1 %}     
     {% endfor %}
 {% endblock %}

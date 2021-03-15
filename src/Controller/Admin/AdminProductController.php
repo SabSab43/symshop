@@ -3,9 +3,12 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Product;
+use App\Form\ConfirmType;
 use App\Form\ProductType;
 use App\Repository\ProductRepository;
 use App\Service\Product\ProductService;
+use App\Service\Remover\RemoverService;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -87,21 +90,33 @@ class AdminProductController extends AbstractController
     /**
      * @Route("/admin/product/remove/{id}", name="admin_product_remove")
      */
-    public function productRemove(int $id, EntityManagerInterface $em, ProductRepository $productRepository)
+    public function productRemove(int $id, EntityManagerInterface $em, ProductRepository $productRepository, Request $request, RemoverService $removerService)
     {
         $product = $productRepository->find($id);
 
-        if (!$product) {
+        if (!$product) 
+        {
             $this->addFlash("danger", "Le produit que vous essayez de supprimer n'existe pas.");
             return $this->redirectToRoute("admin_product_list");
         }
 
-        $em->remove($product);
-        $em->flush();
+        $form =$this->createForm(ConfirmType::class);
+        $form->handleRequest($request);
 
-        $this->addFlash("success", "Le produit a bien été supprimé.");
+        if ($form->isSubmitted() && $form->isValid()) 
+        {
+            if ($form->get('confirm')->getData() !== null) 
+            {
+                $removerService->Remove($form->get('confirm')->getData(), $product, "produit");
+            }
+            return $this->redirectToRoute("admin_product_list");
+        }
 
-        return $this->redirectToRoute("admin_product_list");
+        return $this->render("admin/shared/confirm.html.twig", [
+            "entity" => "produit",
+            "confirmView" => $form->createView(),
+            "path" => "admin_product_list"
+        ]);
     }   
 
     /**
@@ -150,16 +165,67 @@ class AdminProductController extends AbstractController
     }
 
     /**
+     * @Route("/admin/product/display/{id}", name="admin_product_display")
+     */
+    public function productDisplay(int $id, ProductRepository $productRepository, EntityManagerInterface $em)
+    {
+        $product = $productRepository->findOneBy(['id' => $id]);
+
+        if (!$product) 
+        {
+            $this->addFlash('danger' , 'Le produit demandé n\'existe pas.');
+            return $this->redirectToRoute('admin_product_list');
+        }
+
+        if ($product->getIsForward()) {
+            $this->addFlash('danger' , 'Un produit mis en avant ne peut pas être masqué.');
+            return $this->redirectToRoute('admin_product_list');
+        }
+
+        if ($product->getIsDisplayed()) 
+        {
+            $product->setIsDisplayed(false);
+            $this->addFlash('warning' , 'Le produit n\'est plus affiché');
+        } 
+        else
+        {
+            $product->setIsDisplayed(true);
+            $this->addFlash('success' , 'Le produit est désormais affiché.');
+        }
+
+        $em->flush();
+        return $this->redirectToRoute('admin_product_list');
+    }
+
+    /**
      * @Route("/admin/product/list", name="admin_product_list")
      */
     public function productsList(ProductRepository $productRepository) 
     {
-        $notForwardProducts = $productRepository->findBy(['isForward' => false]);
-        $ForwardProducts = $productRepository->findBy(['isForward' => true]);
+        $products = $productRepository->findAll();
+
+        $ForwardProducts = Product::sortForwards($products, true);
+        $notForwardProducts = Product::sortForwards($products, false);
+
+        
+        $productsDisplayed = 0;
+        $nbProducts = 0;
+        foreach ($products as $p) {
+            /** @var Product */
+            if ($p->getIsDisplayed() === true) {
+                $productsDisplayed++;
+            }
+            $nbProducts++;
+        }
+
+        $MaxForwardProducts = 3;
 
         return $this->render("admin/product/list.html.twig", [
             "notForwardProducts" => $notForwardProducts,
-            "ForwardProducts" => $ForwardProducts
+            "ForwardProducts" => $ForwardProducts,
+            "nbProducts" => $nbProducts,
+            "productsDisplayed" => $productsDisplayed,
+            "MaxForwardProducts" => $MaxForwardProducts
         ]);
     }
 

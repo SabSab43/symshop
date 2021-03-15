@@ -80,6 +80,11 @@ class Product
      */
     private $isForward;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isDisplayed;
+
     public function __construct()
     {
         $this->purchaseItems = new ArrayCollection();
@@ -162,6 +167,31 @@ class Product
         return $this;
     }
 
+    
+    public function getIsForward(): ?bool
+    {
+        return $this->isForward;
+    }
+
+    public function setIsForward(bool $isForward): self
+    {
+        $this->isForward = $isForward;
+
+        return $this;
+    }
+
+    public function getIsDisplayed(): ?bool
+    {
+        return $this->isDisplayed;
+    }
+
+    public function setIsDisplayed(bool $isDisplayed): self
+    {
+        $this->isDisplayed = $isDisplayed;
+
+        return $this;
+    }
+
     /**
      * @return Collection|PurchaseItem[]
      */
@@ -191,16 +221,23 @@ class Product
 
         return $this;
     }
-
-    public function getIsForward(): ?bool
+    
+    /**
+     * if isForward === true => return all forwards products
+     * if isForward === false => return all not forwards products
+     *
+     * @param  array $products
+     * @param  bool $isForward
+     * @return array $sortedProducts
+     */
+    public static function sortForwards(array $products, bool $isForward)
     {
-        return $this->isForward;
-    }
-
-    public function setIsForward(bool $isForward): self
-    {
-        $this->isForward = $isForward;
-
-        return $this;
+        foreach ($products as $p) {
+            /** @var Product */
+            if ($p->isForward === $isForward) {
+                $sortedProducts[] = $p;
+            }
+        }
+        return $sortedProducts;
     }
 }
