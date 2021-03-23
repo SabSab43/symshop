@@ -4,7 +4,7 @@
             {{ form_row(formView.name)}}
         </div>
         <div class="col-4 row align-items-end">
-            <div class="col-6">{{ form_row(formView.mainPicture) }}</div>
+            <div class="col-6">{{ form_row(formView.mainPictureFile) }}</div>
             {% if product is defined %}
                 <div class="col-5"><img height="100px" src="/uploads/images/products/{{ product.mainPicture }}" alt="image de {{ product.name }}"></div>
             {% endif %}

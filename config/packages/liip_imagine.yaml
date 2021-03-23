@@ -1,0 +1,7 @@
+liip_imagine:
+    filter_sets:
+        thumb:
+            filters:
+                thumbnail:
+                    size: [500, 500]
+                    mode: outbound

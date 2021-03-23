@@ -6,7 +6,7 @@ use App\Entity\Product;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
-use App\Service\FileUploader\ProductFileUploader;
+// use App\Service\FileUploader\ProductFileUploader;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -15,28 +15,30 @@ class ProductService
 {
 
     private $productRepository;
-    private $productFileUploader;
+    // private $productFileUploader;
     private $slugger;
     private $em;
+    private $flashBag;
 
-    public function __construct(ProductRepository $productRepository, ProductFileUploader $productFileUploader, SluggerInterface $slugger, EntityManagerInterface $em)
+    public function __construct(ProductRepository $productRepository, /*ProductFileUploader $productFileUploader,*/ SluggerInterface $slugger, EntityManagerInterface $em, FlashBagInterface $flashBag)
     {
         $this->productRepository = $productRepository;
-        $this->productFileUploader = $productFileUploader;
+        // $this->productFileUploader = $productFileUploader;
         $this->slugger = $slugger;
         $this->em = $em;
+        $this->flashBag = $flashBag;
     }
     
 
     public function createProduct(Product $product, FormInterface $form)
     {
-        /** @var UploadedFile $mainPicture */
-        $mainPicture = $form->get('mainPicture')->getData();
+        // /** @var UploadedFile $mainPicture */
+        // $mainPicture = $form->get('mainPicture')->getData();
 
-        if ($mainPicture) {
-            $mainPictureName = $this->productFileUploader->upload($mainPicture);
-            $product->setMainPicture($mainPictureName);
-        }
+        // if ($mainPicture) {
+        //     $mainPictureName = $this->productFileUploader->upload($mainPicture);
+        //     $product->setMainPicture($mainPictureName);
+        // }
 
         $product->setSlug(strtolower($this->slugger->slug($product->getName())));
         $product->setIsForward(false);
@@ -60,7 +62,7 @@ class ProductService
     }
 
     /**
-     * update a product
+     * Update a product
      *
      * @param  Product $product
      * @param  FormInterface $form
@@ -68,17 +70,11 @@ class ProductService
      */
     public function updateProduct(Product $product, FormInterface $form)
     {
-        /** @var UploadedFile $mainPicture */
-        $mainPicture = $form->get('mainPicture')->getData();
-
-        if ($mainPicture !== null) {
-            $newMainPicture = $this->productFileUploader->upload($mainPicture);
-            $product->setMainPicture($newMainPicture);
-        }
-
         $product->setSlug(strtolower($this->slugger->slug($product->getName())));
 
         $this->em->flush();        
+
+        $this->flashBag->add("success", "Votre produit a bien été modifié.");
     }
     
     /**

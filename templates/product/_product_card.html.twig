@@ -1,5 +1,5 @@
 <div class="card">
-    <img src="{{ asset('/uploads/images/products/' ~ p.mainPicture) }}" class="img-fluid" alt="Image du produit" style="height: {{ height }}; width:100%;">
+    <img src="{{ vich_uploader_asset(p, 'mainPictureFile') }}" class="img-fluid" alt="Image du produit" style="height: {{ height }}; width:100%;">
     <div class="card-body">
         <h4 class="card-title">{{ p.name }}({{ p.price | amount }})</h4>
         {% if p.category.name is defined %}

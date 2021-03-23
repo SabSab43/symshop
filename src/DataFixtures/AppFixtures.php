@@ -65,7 +65,8 @@ class AppFixtures extends Fixture
 
         $users = [];
 
-        for ($u=0; $u < 5; $u++) { 
+        for ($u=0; $u < 5; $u++)
+        { 
             $user = new User;
             $hash = $this->encoder->encodePassword($user, 'verySafePassword123');
 
@@ -83,11 +84,12 @@ class AppFixtures extends Fixture
         $products = [];
 
         $p=0;
-        $pmax=23;  //Numbers of images products available in ../public/uploads/images/products
+        $pmax=23;  //Numbers of images products available in ../src/DataFixtures/products_images_fixtures
 
        
 
-        for ($i=1; $i <= 3; $i++) { 
+        for ($i=1; $i <= 3; $i++)
+        { 
             $category = new Category();
             $category->setName($faker->department)
                      ->setDisplayed(true)
@@ -97,11 +99,15 @@ class AppFixtures extends Fixture
             $manager->persist($category);
 
             $isForward = 1;
-            for ($j=0; $j < mt_rand(15,20); $j++) { 
-
-                if ($p >= $pmax) {
+            for ($j=0; $j < mt_rand(15,20); $j++) 
+            {
+                
+                if ($p >= $pmax) 
+                {
                     $p=1;
-                } else {
+                } 
+                else 
+                {
                     $p++;
                 }
                 
@@ -114,8 +120,10 @@ class AppFixtures extends Fixture
                         ->setIsForward(false)
                         ->setIsDisplayed(true)
                 ;
+
                 // set one forward product by category
-                if ($isForward === 1) {
+                if ($isForward === 1)
+                {
                     $isForward--;
                     $product->setIsForward(true)
                             ->setIsDisplayed(true)
@@ -127,7 +135,8 @@ class AppFixtures extends Fixture
             }
         }        
 
-        for ($p=0; $p < mt_rand(20, 40); $p++) { 
+        for ($p=0; $p < mt_rand(20, 40); $p++)
+        { 
             $purchase = new Purchase;
             $totalPurchase =0;
             $purchase->setFullname($faker->name())
@@ -140,7 +149,8 @@ class AppFixtures extends Fixture
 
             $selectedProducts = $faker->randomElements($products, mt_rand(3,5));
 
-            foreach ($selectedProducts as $product) {
+            foreach ($selectedProducts as $product)
+            {
                 $purchaseItem = new PurchaseItem;
                 $purchaseItem->setProduct($product)
                              ->setQuantity(mt_rand(1,3))
@@ -153,7 +163,8 @@ class AppFixtures extends Fixture
                 $manager->persist($purchaseItem);
             }
 
-            if ($faker->boolean(90)) {
+            if ($faker->boolean(90))
+            {
                 $purchase->setStatus(Purchase::STATUS_PAID);
             }
 
@@ -161,7 +172,6 @@ class AppFixtures extends Fixture
             
             $manager->persist($purchase);
         }
-
         $manager->flush();
     }
 }

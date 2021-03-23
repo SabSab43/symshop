@@ -40,63 +40,68 @@ class ProductType extends AbstractType
                 'placeholder' => '-- Choisissez une catégorie --',
                 'class' => Category::class,
                 'choice_label' => "name"
-            ]);
+            ])
+            ->add("mainPictureFile", FileType::class, [
+                "required" => false,
+                "label" => "Image du produit"
+            ])
+            ;
 
 
-            $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
-                /** @var Product */
-                $product = $event->getData();
-                $form = $event->getForm();
+            // $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
+            //     /** @var Product */
+            //     $product = $event->getData();
+            //     $form = $event->getForm();
 
-                if (!$product || null === $product->getId()) {
-                    $form->add("mainPicture", FileType::class, [
-                        "label" => "Image du produit",
-                        'mapped' => false,
-                        'required' => true,
-                        'constraints' => [
-                            new File([
-                                'maxSize' => '1024k',
-                                'maxSizeMessage' => 'La taille de l\'image ne doit pas être supérieur à {{ limit }}',
-                                'uploadIniSizeErrorMessage' => 'La taille de limage ne doit pas être supérieur à {{ limit }}{{ suffix }}',
-                                'mimeTypes' => [
-                                    'image/jpg',
-                                    'image/jpeg',
-                                ],
-                                'mimeTypesMessage' => 'L\'image doit être au format .jpeg ou .jpg'
-                            ]),
-                            new NotBlank([
-                                "message" => "Vous devez choisir une image pour le produit."
-                            ])
-                        ],
-                    ]);
-                }
-            });
+            //     if (!$product || null === $product->getId()) {
+            //         $form->add("mainPicture", FileType::class, [
+            //             "label" => "Image du produit",
+            //             'mapped' => false,
+            //             'required' => true,
+            //             'constraints' => [
+            //                 new File([
+            //                     'maxSize' => '1024k',
+            //                     'maxSizeMessage' => 'La taille de l\'image ne doit pas être supérieur à {{ limit }}',
+            //                     'uploadIniSizeErrorMessage' => 'La taille de limage ne doit pas être supérieur à {{ limit }}{{ suffix }}',
+            //                     'mimeTypes' => [
+            //                         'image/jpg',
+            //                         'image/jpeg',
+            //                     ],
+            //                     'mimeTypesMessage' => 'L\'image doit être au format .jpeg ou .jpg'
+            //                 ]),
+            //                 new NotBlank([
+            //                     "message" => "Vous devez choisir une image pour le produit."
+            //                 ])
+            //             ],
+            //         ]);
+            //     }
+            // });
 
-            $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event){
-                /** @var Product */
-                $product = $event->getData();
-                $form = $event->getForm();
+            // $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event){
+            //     /** @var Product */
+            //     $product = $event->getData();
+            //     $form = $event->getForm();
 
-                if ($product && null !== $product->getId()) {
-                    $form->add("mainPicture", FileType::class, [
-                        "label" => "Image du produit",
-                        'mapped' => false,
-                        'required' => false,
-                        'constraints' => [
-                            new File([
-                                'maxSize' => '1024k',
-                                'maxSizeMessage' => "La taille de limage ne doit pas être supérieur à {{ limit }}",
-                                'uploadIniSizeErrorMessage' => 'La taille de limage ne doit pas être supérieur à {{ limit }}{{ suffix }}', 
-                                'mimeTypes' => [
-                                    'image/jpg',
-                                    'image/jpeg',
-                                ],
-                                'mimeTypesMessage' => 'L\'image doit être au format .jpeg ou .jpg'
-                            ])
-                        ],
-                    ]);
-                }
-            });
+            //     if ($product && null !== $product->getId()) {
+            //         $form->add("mainPicture", FileType::class, [
+            //             "label" => "Image du produit",
+            //             'mapped' => false,
+            //             'required' => false,
+            //             'constraints' => [
+            //                 new File([
+            //                     'maxSize' => '1024k',
+            //                     'maxSizeMessage' => "La taille de limage ne doit pas être supérieur à {{ limit }}",
+            //                     'uploadIniSizeErrorMessage' => 'La taille de limage ne doit pas être supérieur à {{ limit }}{{ suffix }}', 
+            //                     'mimeTypes' => [
+            //                         'image/jpg',
+            //                         'image/jpeg',
+            //                     ],
+            //                     'mimeTypesMessage' => 'L\'image doit être au format .jpeg ou .jpg'
+            //                 ])
+            //             ],
+            //         ]);
+            //     }
+            // });
     }
 
     public function configureOptions(OptionsResolver $resolver)

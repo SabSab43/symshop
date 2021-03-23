@@ -72,8 +72,6 @@ class AdminProductController extends AbstractController
 
             $productService->updateProduct($product, $form);
 
-            $this->addFlash("success", "Votre produit a bien été modifié.");
-
             return $this->redirectToRoute("admin_product_edit", [
                 "category_slug" => $product->getCategory()->getSlug(),
                 "slug" => $product->getSlug(),
