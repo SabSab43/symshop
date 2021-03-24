@@ -42,16 +42,14 @@ class AppFixtures extends Fixture
      */
     public function load(ObjectManager $manager)
     {
-
         $faker = Factory::create('fr_FR');
         $faker->addProvider(new Prices($faker));
         $faker->addProvider(new Commerce($faker));
         $faker->addProvider(new PicsumPhotosProvider($faker));
 
-
         $admin = new User;
 
-        $hash = $this->encoder->encodePassword($admin, 'adminVerySafePassword123');
+        $hash = $this->encoder->encodePassword($admin, 'password');
 
         $admin->setEmail('admin@gmail.com')
             ->setPassword($hash)
@@ -68,7 +66,7 @@ class AppFixtures extends Fixture
         for ($u=0; $u < 5; $u++)
         { 
             $user = new User;
-            $hash = $this->encoder->encodePassword($user, 'verySafePassword123');
+            $hash = $this->encoder->encodePassword($user, 'password');
 
             $user->setEmail("user$u@gmail.com")
                 ->setPassword($hash)
@@ -84,9 +82,7 @@ class AppFixtures extends Fixture
         $products = [];
 
         $p=0;
-        $pmax=23;  //Numbers of images products available in ../src/DataFixtures/products_images_fixtures
-
-       
+        $pmax=23;  //Number of images products available in ../src/Datafixtures/fixtures_images_products
 
         for ($i=1; $i <= 3; $i++)
         { 
@@ -110,7 +106,7 @@ class AppFixtures extends Fixture
                 {
                     $p++;
                 }
-                
+
                 $product = new Product();
                 $product->setName($faker->productName)
                         ->setPrice($faker->price(4000, 20000))

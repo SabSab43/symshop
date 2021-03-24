@@ -55,21 +55,13 @@ class RegistrationFormType extends AbstractType
                 // this is read and encoded in the controller
                 // 'mapped' => false,
                 "label" => "Mot de passe",
-                'constraints' => [
-                    new Length([
-                        'min' => 8,
-                        'minMessage' => 'Votre mot de passe doit contenir au moins {{ limit }} caractères.',
-                        // max length allowed by Symfony for security reasons
-                        'max' => 4096,
-                    ]),
-                ],
             ])
             ->add('confirmPassword', PasswordType::class, [
                 "mapped" => false,
                 "label" => "Confirmer le mot de passe",
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Veuillez confirmer votre mot de passe',
+                        'message' => 'Veuillez confirmer votre mot de passe.',
                     ])
                 ],
             ])

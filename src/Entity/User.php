@@ -2,13 +2,17 @@
 
 namespace App\Entity;
 
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator as AcmeAssert;
+use App\Validator\ContainNumber;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use App\Validator\ContainSpecialCharacter;
 use Doctrine\Common\Collections\Collection;
+use App\Validator\ContainUppercaseCharacter;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -42,9 +46,12 @@ class User implements UserInterface
      * @Assert\Length(
      *      min = 8,
      *      max = 255,
-     *      minMessage = "Le mot de passe doit contenir au moins {{ limit }}caractères",
+     *      minMessage = "Le mot de passe doit contenir au moins {{ limit }} caractères",
      *      maxMessage = "Le mot de passe doit contenir au maximum {{ limit }} caractères"
      * )
+     * @AcmeAssert\ContainNumber
+     * @AcmeAssert\ContainSpecialCharacter
+     * @AcmeAssert\ContainUppercaseCharacter
      */
     private $password;
 

@@ -4,9 +4,13 @@ namespace App\Service\User;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Security\EmailVerifier;
+use Symfony\Component\Mime\Address;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
@@ -43,47 +47,49 @@ class UserService
      */
     private $em;
 
-    public function __construct(FlashBagInterface $flashBag, UserRepository $userRepository, UserPasswordEncoderInterface $encoder, EntityManagerInterface $em)
+    private $emailVerifier;
+
+    public function __construct(FlashBagInterface $flashBag, UserRepository $userRepository, UserPasswordEncoderInterface $encoder, EntityManagerInterface $em, EmailVerifier $emailVerifier)
     {
         $this->flashBag =$flashBag;
         $this->userRepository = $userRepository;
         $this->encoder = $encoder;
         $this->em = $em;
+        $this->emailVerifier = $emailVerifier;
     }
-    
-    /**
-     * Create a new user with form data;
-     *
-     * @param  FormInterface $form
-     */
-    public function createUser(FormInterface $form)
-    {         
-        /**@var User */   
-        $user =$form->getData();
-        $confirmPassword = $form->get('confirmPassword')->getViewData();
-
-        if(!$this->checkPasswords($user->getPassword(), $confirmPassword))
-        {
-            $this->flashBag->add("danger", "Les mots de passe ne sont pas identiques.");
-            return;
-        }
         
-        if ($this->emailExist($user->getEmail())) 
-        {
-            $this->flashBag->add("danger", "cette adresse email est déjà liée à un compte, merci d'en choisir une autre.");
-            return;
-        }
-
-        $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
+    /**
+     * create a new User and send a signed url
+     *
+     * @param  User $user
+     * @param  FormInterface $form
+     * @return void
+     */
+    public function createUser(User $user, FormInterface $form)
+    {         
+        $user->setPassword(
+            $this->encoder->encodePassword(
+                $user,
+                $form->get('password')->getData()
+            )
+        );
 
         $this->em->persist($user);
         $this->em->flush();
 
-        $this->flashBag->add("success", "Votre inscription a bien été effecuée, vous pouvez désormais vous connecter à votre comtpe.");
+        // generate a signed url and email it to the user
+        $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+            (new TemplatedEmail())
+                ->from(new Address('contact@lucassaby.fr', 'Lucas Saby'))
+                ->to($user->getEmail())
+                ->subject('SymShop - Confirmation de votre adresse email')
+                ->htmlTemplate('registration/confirmation_email.html.twig')
+        );
+        $this->flashBag->add("success", "Votre inscription a bien été prise en comtpe, un email de confirmation vient de vous être envoyé pour confirmer votre inscription.");
     }
 
     /**
-     * check if passwords are same or not
+     * check if two submited passwords are same or not
      *
      * @param  string $password
      * @param  string $confirmPassword
@@ -95,7 +101,7 @@ class UserService
     }
     
     /**
-     * Check if an email adress exist in database.
+     * Check if an email adress exists in database.
      *
      * @param  string $email
      * @return bool
@@ -107,7 +113,14 @@ class UserService
         }
         return false;
     }
-
+    
+    /**
+     * Set current User to Admin
+     *
+     * @param  mixed $user
+     * @param  mixed $isConfirmed
+     * @return void
+     */
     public function setAdmin(User $user, bool $isConfirmed)
     {
         if ($isConfirmed)
@@ -122,7 +135,14 @@ class UserService
             $this->flashBag->add("info", "L'utilisateur n'a pas été promu.");
         }
     }
-
+    
+    /**
+     * unset currrent Admin to user 
+     *
+     * @param  mixed $admin
+     * @param  mixed $isConfirmed
+     * @return void
+     */
     public function unsetAdmin(User $admin, bool $isConfirmed)
     {
         if ($isConfirmed) 

@@ -150,7 +150,7 @@ class AdminProductController extends AbstractController
         }
 
         if ($productRepository->count(['isForward' => true]) >= $this->maxForwardProduct) {
-            $this->addFlash("danger", "Il ne peut y avori que $this->maxForwardProduct produits vedettes.");
+            $this->addFlash("danger", "Il ne peut y avoir que $this->maxForwardProduct produits vedettes.");
             return $this->redirectToRoute("admin_product_list");
         }
 
