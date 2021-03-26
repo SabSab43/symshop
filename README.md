@@ -30,6 +30,12 @@ Vous devez définir les variaibles d'environnement suivantes avec vos informatio
 
     STRIPE_PUBLIC_KEY="VOTRE_CLE_PUBLIC"
     
+    USER_PASSWORD="P@ssw0rd"
+    
+    ADMIN_PASSWORD="AdminP@ssw0rd"
+
+    NB_FORWARD_PRODUCTS=3
+    
 # Initialiser la base de données:
 
 Une fois le fichier .env configuré, vous pouvez exécuter ces commandes pour créer la base de données et ses tables:
@@ -40,12 +46,16 @@ Une fois le fichier .env configuré, vous pouvez exécuter ces commandes pour cr
     
 # Alimenter la base de données:
  
- Avant d'alimenter la base de données, pensez à changer les identifiants de l'administrateur et des utilisateurs dans le fichier suivant:
- 
-     ..\symshop\boutique\src\DataFixtures\AppFixtures.php
-
-Lancez ensuite la commande suivante:
+ En fonction de votre configuration serveur, vous devrez créer ou non la base de données avec la commande suivante:
     
+    php bin/console doctrine:database:create
+ 
+ Le fichier composer.json contient un script "database-setup" qui créé les tables et les remplit.
+ 
+ Vous pouvez configurer les paramètres des fixtures dans le fichier "config/services.yaml" (l.70)
+ 
+Les commandes pour créér et alimenter les tables de la base de donénes mannuellement:
+    php bin/console d:m:m --no-interaction
     php bin/console d:f:l --no-interaction  
 
  # Lancer le serveur
