@@ -54,7 +54,7 @@ Une fois le fichier .env configuré, vous pouvez exécuter ces commandes pour cr
  
  Vous pouvez configurer les paramètres des fixtures dans le fichier "config/services.yaml" (l.70)
  
-Les commandes pour créér et alimenter les tables de la base de donénes mannuellement:
+Les commandes pour créér et alimenter les tables de la base de données mannuellement:
 
     php bin/console d:m:m --no-interaction
     php bin/console d:f:l --no-interaction  
