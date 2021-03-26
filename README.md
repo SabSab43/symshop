@@ -50,7 +50,9 @@ Une fois le fichier .env configuré, vous pouvez exécuter ces commandes pour cr
     
     php bin/console doctrine:database:create
  
- Le fichier composer.json contient un script "database-setup" qui créé les tables et les remplit.
+ Le fichier composer.json contient un script "database-setup" qui créé les tables et les remplit, pour l'exécuter tapez:
+    
+    composer run database-setup
  
  Vous pouvez configurer les paramètres des fixtures dans le fichier "config/services.yaml" (l.70)
  
