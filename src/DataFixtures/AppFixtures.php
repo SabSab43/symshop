@@ -2,7 +2,6 @@
 
 namespace App\DataFixtures;
 
-use COM;
 use Faker\Factory;
 use App\Entity\Product;
 use Liior\Faker\Prices;
@@ -14,6 +13,7 @@ use Bezhanov\Faker\Provider\Commerce;
 use Bluemmb\Faker\PicsumPhotosProvider;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
@@ -27,11 +27,92 @@ class AppFixtures extends Fixture
      * @var UserPasswordEncoderInterface
      */
     protected $encoder;
+    
+    /**
+     * path to images fixtures directory
+     *
+     * @var string
+     */
+    protected $pathToImagesFixturesDirectory;
+    
+    /**
+     * path to products main pictures directory
+     *
+     * @var string
+     */
+    protected $pathToProductsMainPicturesDirectory;
+    
+    /**
+     * Number of image Fixtures in fixtures_images Repertory
+     *
+     * @var int
+     */
+    protected $nbFixturesImages;
+    
+    /**
+     * logger
+     *
+     * @var LoggerInterface
+     */
+    protected $logger;
+        
+    /**
+     * number of administrators
+     *
+     * @var int
+     */
+    protected $nbAdmins;
+
+    /**
+     * Admin password
+     *
+     * @var string
+     */
+    protected $adminPassword;
+    
+    /**
+     * Number of users
+     *
+     * @var int
+     */
+    protected $nbUsers;
+    
+    /**
+     * User password
+     *
+     * @var string
+     */
+    protected $userPassword;
+    
+    
+    /**
+     * Number of Categories
+     *
+     * @var int
+     */
+    protected $nbCategories;
+    
+    /**
+     * number of forward products
+     *
+     * @var int
+     */
+    protected $nbForwardProducts;
 
 
-    public function __construct(UserPasswordEncoderInterface $encoder)
+    public function __construct(UserPasswordEncoderInterface $encoder, $pathToImagesFixturesDirectory, $pathToProductsMainPicturesDirectory, int $nbFixturesImages, LoggerInterface $logger, int $nbUsers, string $userPassword, int $nbAdmins, string $adminPassword, int $nbCategories, int $nbForwardProducts)
     {
         $this->encoder = $encoder;
+        $this->pathToImagesFixturesDirectory = $pathToImagesFixturesDirectory;
+        $this->pathToProductsMainPicturesDirectory = $pathToProductsMainPicturesDirectory;
+        $this->nbFixturesImages = $nbFixturesImages;
+        $this->logger = $logger;
+        $this->nbAdmins = $nbAdmins;
+        $this->adminPassword = $adminPassword;
+        $this->nbUsers = $nbUsers;
+        $this->userPassword = $userPassword;
+        $this->nbCategories = $nbCategories;
+        $this->nbForwardProducts = $nbForwardProducts;
     }
     
     /**
@@ -42,31 +123,36 @@ class AppFixtures extends Fixture
      */
     public function load(ObjectManager $manager)
     {
+        $this->logger->notice("Generating fixtures: Start...");  
+
         $faker = Factory::create('fr_FR');
         $faker->addProvider(new Prices($faker));
         $faker->addProvider(new Commerce($faker));
         $faker->addProvider(new PicsumPhotosProvider($faker));
-
-        $admin = new User;
-
-        $hash = $this->encoder->encodePassword($admin, 'password');
-
-        $admin->setEmail('admin@gmail.com')
-            ->setPassword($hash)
-            ->setRoles(['ROLE_ADMIN'])
-            ->setLastName('Saby')
-            ->setFirstName('Lucas')
-            ->setIsVerified(true)
-        ;
         
-        $manager->persist($admin);
+        $admins = [];
+        for ($a=0; $a < $this->nbAdmins; $a++) 
+        { 
+            $admin = new User;        
+            $hash = $this->encoder->encodePassword($admin, $this->adminPassword);
+
+            $admin->setEmail('admin@gmail.com')
+                ->setPassword($hash)
+                ->setRoles(['ROLE_ADMIN'])
+                ->setLastName('Saby')
+                ->setFirstName('Lucas')
+                ->setIsVerified(true)
+            ;        
+
+            $admins[] = $admin;
+            $manager->persist($admin);
+        }
 
         $users = [];
-
-        for ($u=0; $u < 5; $u++)
+        for ($u=0; $u < $this->nbUsers; $u++)
         { 
-            $user = new User;
-            $hash = $this->encoder->encodePassword($user, 'password');
+            $user = new User;            
+            $hash = $this->encoder->encodePassword($user, $this->userPassword);
 
             $user->setEmail("user$u@gmail.com")
                 ->setPassword($hash)
@@ -80,61 +166,71 @@ class AppFixtures extends Fixture
         }
 
         $products = [];
+        $p = 0;
+        $nbProducts = 0;
 
-        $p=0;
-        $pmax=23;  //Number of images products available in ../src/Datafixtures/fixtures_images_products
+        array_map('unlink', glob($this->pathToProductsMainPicturesDirectory.'*.jpg'));
 
-        for ($i=1; $i <= 3; $i++)
+        for ($i=1; $i <= $this->nbCategories; $i++)
         { 
             $category = new Category();
             $category->setName($faker->department)
                      ->setDisplayed(true)
                      ->setDescription($faker->text(mt_rand(50,160)))
             ;
-
+            
             $manager->persist($category);
-
-            $isForward = 1;
+            
+            $nbForwardProductsByCategory = $this->nbForwardProducts / $this->nbCategories;            
             for ($j=0; $j < mt_rand(15,20); $j++) 
-            {
+            {                
+                if ($p >= $this->nbFixturesImages) {$p = 0;}
+                $p++;
+                $nbProducts++;
+
+                $fixtureImage = "product-picture-($p).jpg";
+                $finalMainPicture = "product-picture-$nbProducts-".uniqid().".jpg";
                 
-                if ($p >= $pmax) 
-                {
-                    $p=1;
-                } 
-                else 
-                {
-                    $p++;
+                try {
+                    copy($this->pathToImagesFixturesDirectory.$fixtureImage, $this->pathToProductsMainPicturesDirectory.$finalMainPicture);
+                } catch (\Throwable $th) {
+                    throw $th;
                 }
-
+                
                 $product = new Product();
+                
                 $product->setName($faker->productName)
-                        ->setPrice($faker->price(4000, 20000))
-                        ->setCategory($category)
-                        ->setMainPicture("product-picture-($p).jpg")
-                        ->setShortDescription($faker->paragraph())
-                        ->setIsForward(false)
-                        ->setIsDisplayed(true)
+                ->setPrice($faker->price(4000, 20000))
+                ->setCategory($category)
+                ->setMainPicture($finalMainPicture)
+                ->setShortDescription($faker->paragraph())
+                ->setIsForward(false)
+                ->setIsDisplayed(true)
                 ;
-
-                // set one forward product by category
-                if ($isForward === 1)
+                               
+                if ($nbForwardProductsByCategory > 0)
                 {
-                    $isForward--;
+                    $nbForwardProductsByCategory--;
                     $product->setIsForward(true)
-                            ->setIsDisplayed(true)
+                        ->setIsDisplayed(true)
                     ;
                 }
-
+                
                 $products[] = $product;                        
                 $manager->persist($product);
             }
+
         }        
 
+        $nbPurchases = 0;
         for ($p=0; $p < mt_rand(20, 40); $p++)
         { 
+            $nbPurchases++;
+
             $purchase = new Purchase;
+
             $totalPurchase =0;
+
             $purchase->setFullname($faker->name())
                     ->setAddress($faker->streetAddress)
                     ->setPostalCode($faker->postcode)
@@ -164,10 +260,12 @@ class AppFixtures extends Fixture
                 $purchase->setStatus(Purchase::STATUS_PAID);
             }
 
-            $purchase->setTotal($totalPurchase);
-            
+            $purchase->setTotal($totalPurchase);            
             $manager->persist($purchase);
         }
         $manager->flush();
+
+        $this->logger->info("$this->nbAdmins administrator(s), $this->nbUsers user(s), $this->nbCategories categories $nbProducts product(s), $nbPurchases purchase(s) created.");   
+        $this->logger->notice("Generating fixtures: End.");  
     }
 }

@@ -25,8 +25,14 @@ class ProductService
         $this->flashBag = $flashBag;
     }
     
-
-    public function createProduct(Product $product, FormInterface $form)
+    
+    /**
+     * Persist and Flush the new Product
+     *
+     * @param  Product $product
+     * @return void
+     */
+    public function createProduct(Product $product)
     {
         $product->setSlug(strtolower($this->slugger->slug($product->getName())));
         $product->setIsForward(false);
@@ -56,7 +62,7 @@ class ProductService
      * @param  FormInterface $form
      * @return void
      */
-    public function updateProduct(Product $product, FormInterface $form)
+    public function updateProduct(Product $product)
     {
         $product->setSlug(strtolower($this->slugger->slug($product->getName())));
 

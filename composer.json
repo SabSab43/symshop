@@ -26,6 +26,7 @@
         "symfony/console": "5.2.*",
         "symfony/dotenv": "5.2.*",
         "symfony/expression-language": "5.2.*",
+        "symfony/filesystem": "5.2.*",
         "symfony/flex": "^1.3.1",
         "symfony/form": "5.2.*",
         "symfony/framework-bundle": "5.2.*",
@@ -90,8 +91,13 @@
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
+        "database-setup": [
+            "php bin/console doctrine:migrations:migrate --no-interaction",  
+            "php bin/console doctrine:fixtures:load --no-interaction"
+        ],
         "post-install-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            "@database-setup"
         ],
         "post-update-cmd": [
             "@auto-scripts"

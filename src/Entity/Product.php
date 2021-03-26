@@ -71,7 +71,7 @@ class Product
      * 
      * @Vich\UploadableField(mapping="product_image", fileNameProperty="mainPicture")
      * @Assert\Image(
-     *      mimeTypes = {"images/jpeg", "images/jpg"},
+     *      mimeTypes = {"image/jpeg", "image/jpg"},
      *      mimeTypesMessage = "Le format de l'image est incorrect."
      * )
      * 
@@ -123,6 +123,9 @@ class Product
     {
         if ($this->updatedAt === null) {
             $this->updatedAt = new DateTime('now');
+        }
+        if ($this->isDisplayed === null) {
+            $this->isDisplayed = true;
         }
     }
 

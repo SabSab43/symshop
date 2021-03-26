@@ -66,3 +66,15 @@ services:
     App\Controller\Admin\AdminProductController:
         arguments:
             $maxForwardProduct: 3
+
+    App\DataFixtures\AppFixtures:
+        arguments:
+            $nbAdmins: 1
+            $adminPassword: "%env(ADMIN_PASSWORD)%"
+            $nbUsers: 5
+            $userPassword: "%env(USER_PASSWORD)%"
+            $nbCategories: 3
+            $nbForwardProducts: "%env(NB_FORWARD_PRODUCTS)%"
+            $nbFixturesImages: 23
+            $pathToImagesFixturesDirectory: "%kernel.project_dir%/src/DataFixtures/fixtures_images/"
+            $pathToProductsMainPicturesDirectory: "%kernel.project_dir%/public/uploads/images/products/"
